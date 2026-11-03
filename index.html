@@ -1436,7 +1436,7 @@
             <span id="currentCatPreviewTitle">💬 [또래·공동체] 현재 조합된 문단</span>
             <button type="button" class="btn btn-purple" style="padding:4px 10px; font-size:0.76rem;" id="btnRerollCat">🔄 이 영역 문장만 새로 뽑기</button>
           </div>
-          <div id="currentCatPreviewText">▪ 또래 관계는 전반적으로 원만하며, 대부분의 또래와 대화를 나누고 관계를 이어 가는 모습이 관찰되고 있음. 다만 관계를 깊게 발전시키기보다는 일정한 거리를 유지하는 경향이 있음. 입소 초기에는 자신을 강하게 드러내려는 모습이 종종 나타났으나, 최근에는 상대방을 이해하고 받아들이려는 모습이 늘어나고 있음. 또래를 대하는 태도가 이전보다 유연해지고 있으며, 관계를 유지하는 방식에서도 긍정적인 변화가 확인되고 있음.</div>
+          <div id="currentCatPreviewText">관찰 내용을 선택하면 이 영역의 문장이 표시됩니다.</div>
         </div>
 
         <!-- Formatting & Meta Options -->
@@ -1549,12 +1549,10 @@
         <!-- Include/Exclude Category Checkboxes -->
         <div class="section-toggles" id="sectionToggles"></div>
 
-        <textarea id="reportOutput" class="report-box">▪ 또래 관계는 전반적으로 원만하며, 대부분의 또래와 대화를 나누고 관계를 이어 가는 모습이 관찰되고 있음. 다만 관계를 깊게 발전시키기보다는 일정한 거리를 유지하는 경향이 있음. 입소 초기에는 자신을 강하게 드러내려는 모습이 종종 나타났으나, 최근에는 상대방을 이해하고 받아들이려는 모습이 늘어나고 있음. 또래를 대하는 태도가 이전보다 유연해지고 있으며, 관계를 유지하는 방식에서도 긍정적인 변화가 확인되고 있음.
-
-▪ 수업 태도는 전반적으로 양호하며, 대부분의 수업에서 높은 이해도를 보이고 교사의 안내에 따라 학습활동에 참여하고 있음. 신체활동 중심의 수업을 선호하며, 충분한 사고가 필요한 활동에서는 비교적 간단하고 부담이 적은 방식으로 참여하려는 경향이 관찰되고 있음. 학습 내용을 이해하는 능력은 양호하나, 생각하는 과정에 충분히 참여하고 스스로 해결 방법을 찾아가는 태도에는 보완이 필요함.</textarea>
+        <textarea id="reportOutput" class="report-box" placeholder="관찰 내용을 선택하면 보고서가 표시됩니다."></textarea>
 
         <div class="preview-footer">
-          <span class="char-counter" id="charCount">449자 (공백 포함)</span>
+          <span class="char-counter" id="charCount">0자 (공백 포함)</span>
           <div style="display:flex; gap:8px;">
             <button type="button" class="btn btn-accent" id="btnSaveChild">기록함에 저장</button>
             <button type="button" class="btn" id="btnDownloadTxt">TXT 저장</button>
@@ -1580,8 +1578,8 @@
   <!-- Mobile Sticky Bottom Bar -->
   <div class="mobile-bottom-bar">
     <div class="mobile-bar-info" id="mobileBarInfo">
-      <div class="mobile-bar-title" id="mobileBarStatus">보고서 2개 문단 완성 · 터치하여 전문 확인</div>
-      <div class="mobile-bar-snippet" id="mobileBarSnippet">▪ 또래 관계는 전반적으로 원만하며, 대부분의 또래와 대화를 나누고...</div>
+      <div class="mobile-bar-title" id="mobileBarStatus">특성을 선택해 주세요</div>
+      <div class="mobile-bar-snippet" id="mobileBarSnippet">선택된 문장이 없습니다.</div>
     </div>
     <div class="mobile-bar-btns">
       <button type="button" class="btn btn-purple" style="padding:7px 10px; font-size:0.76rem;" id="btnRerollMobile">🔄 새 표현</button>
@@ -1602,7 +1600,7 @@
 
     let activeCategoryId = "peer";
     let currentMonthStage = "none"; // "none", "1".."6"
-    let selections = {"peer": {"peer_overall": "p1_1", "peer_tendency": "p2_1", "peer_change": "p3_1", "peer_conclusion": "p4_1"}, "class": {"class_overall": "c1_1", "class_preference": "c2_1", "class_behavior": null, "class_conclusion": "c3_1"}, "life": {"life_overall": "l1_1", "life_detail": "l2_1", "life_conclusion": "l3_1"}, "trait": {"trait_temperament": "t1_1", "trait_reflection": "t2_1", "trait_support": "t3_1"}};
+    let selections = { peer: {}, class: {}, life: {}, trait: {} };
     let customTexts = {};
     let savedRecords = [];
 
