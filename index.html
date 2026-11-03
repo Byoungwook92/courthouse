@@ -1,0 +1,2996 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>6호시설 아동 6개월 월별 관찰·생활기록 보고서 생성기</title>
+  <style>
+    :root {
+      --bg: #f1f5f9;
+      --surface: #ffffff;
+      --surface-alt: #f8fafc;
+      --primary: #1d4ed8;
+      --primary-soft: #dbeafe;
+      --primary-border: #93c5fd;
+      --accent: #0f766e;
+      --accent-soft: #ccfbf1;
+      --purple: #6d28d9;
+      --purple-soft: #ede9fe;
+      --amber: #b45309;
+      --amber-soft: #fef3c7;
+      --text: #0f172a;
+      --text-sub: #334155;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --radius-lg: 14px;
+      --radius-md: 10px;
+      --radius-sm: 8px;
+      --shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", "Malgun Gothic", sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+      padding: 14px;
+      padding-bottom: 125px;
+    }
+
+    .app-container {
+      max-width: 1340px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    .header {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 16px 18px;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-title h1 {
+      font-size: 1.18rem;
+      font-weight: 800;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .badge {
+      font-size: 0.73rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+
+    .badge-purple {
+      font-size: 0.73rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: var(--purple-soft);
+      color: var(--purple);
+    }
+
+    .badge-teal {
+      font-size: 0.73rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .header-title p {
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      margin-top: 3px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+
+    @media (min-width: 768px) {
+      .header-actions {
+        width: auto;
+      }
+    }
+
+    /* Buttons */
+    .btn {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-sub);
+      padding: 7px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+
+    .btn:hover {
+      background: var(--surface-alt);
+      border-color: #cbd5e1;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+
+    .btn-primary:hover {
+      background: #1e40af;
+    }
+
+    .btn-purple {
+      background: var(--purple);
+      color: #ffffff;
+      border-color: var(--purple);
+    }
+
+    .btn-purple:hover {
+      background: #5b21b6;
+    }
+
+    .btn-accent {
+      background: var(--accent);
+      color: #ffffff;
+      border-color: var(--accent);
+    }
+
+    .btn-accent:hover {
+      background: #115e59;
+    }
+
+    .btn-mini-reroll {
+      border: 1px solid #ddd6fe;
+      background: var(--purple-soft);
+      color: var(--purple);
+      padding: 4px 9px;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.12s ease;
+    }
+
+    .btn-mini-reroll:hover {
+      background: #ddd6fe;
+    }
+
+    /* Previous Report Analyzer Panel */
+    .prev-report-panel {
+      background: linear-gradient(180deg, #f0fdfa 0%, #ffffff 100%);
+      border: 2px solid #5eead4;
+      border-radius: var(--radius-lg);
+      padding: 16px 18px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .prev-panel-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .prev-panel-title {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #115e59;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .month-pills {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .month-pill {
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid #99f6e4;
+      background: #ffffff;
+      color: #0f766e;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.12s ease;
+    }
+
+    .month-pill.active {
+      background: var(--accent);
+      color: #ffffff;
+      border-color: var(--accent);
+    }
+
+    .prev-input-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    @media (min-width: 960px) {
+      .prev-input-grid {
+        grid-template-columns: 1fr 1.25fr;
+      }
+    }
+
+    .prev-textarea {
+      width: 100%;
+      min-height: 115px;
+      padding: 11px 13px;
+      border: 1px solid #99f6e4;
+      border-radius: var(--radius-md);
+      font-family: inherit;
+      font-size: 0.84rem;
+      line-height: 1.55;
+      background: #ffffff;
+      color: var(--text);
+      resize: vertical;
+      outline: none;
+    }
+
+    .prev-textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.12);
+    }
+
+    .prev-growth-box {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+    }
+
+    .growth-group {
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px dashed var(--border);
+    }
+
+    .growth-group:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+
+    .growth-group-header {
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: #0f766e;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .detected-tag {
+      font-size: 0.72rem;
+      background: #fef3c7;
+      color: #92400e;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+
+    .growth-chip {
+      border: 1px solid #cbd5e1;
+      background: #f8fafc;
+      color: var(--text-sub);
+      padding: 7px 11px;
+      border-radius: 8px;
+      font-size: 0.81rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.12s ease;
+      text-align: left;
+      line-height: 1.35;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .growth-chip:hover {
+      border-color: #2dd4bf;
+      background: #f0fdfa;
+    }
+
+    .growth-chip.selected {
+      background: var(--accent);
+      color: #ffffff;
+      border-color: var(--accent);
+      box-shadow: 0 2px 8px rgba(15, 118, 110, 0.22);
+    }
+
+    .growth-badge {
+      font-size: 0.7rem;
+      padding: 1px 6px;
+      border-radius: 4px;
+      background: rgba(15, 23, 42, 0.08);
+      white-space: nowrap;
+    }
+
+    .growth-chip.selected .growth-badge {
+      background: rgba(255, 255, 255, 0.22);
+      color: #fff;
+    }
+
+    /* Main Grid */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1.25fr 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    @media (max-width: 960px) {
+      body {
+        padding: 10px;
+        padding-bottom: 125px;
+      }
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    /* Category Tabs */
+    .tabs-label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    @media (min-width: 640px) {
+      .tabs {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .tab-btn {
+      padding: 9px 10px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      background: var(--surface-alt);
+      color: var(--text-sub);
+      font-size: 0.84rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 3px;
+      text-align: left;
+    }
+
+    .tab-btn.active {
+      background: var(--primary-soft);
+      color: var(--primary);
+      border: 2px solid var(--primary);
+    }
+
+    .tab-top-row {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      align-items: center;
+    }
+
+    .tab-count {
+      font-size: 0.71rem;
+      background: rgba(29, 78, 216, 0.12);
+      color: var(--primary);
+      padding: 1px 6px;
+      border-radius: 99px;
+      font-weight: 700;
+    }
+
+    /* Step Blocks */
+    .step-group {
+      margin-bottom: 14px;
+      padding: 13px;
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+    }
+
+    .step-header {
+      margin-bottom: 8px;
+    }
+
+    .step-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .step-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .step-num {
+      width: 21px;
+      height: 21px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      font-size: 0.74rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .step-hint {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      margin-top: 3px;
+      margin-left: 28px;
+    }
+
+    .chips-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 8px;
+    }
+
+    .chip {
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      color: var(--text-sub);
+      padding: 8px 12px;
+      border-radius: 9px;
+      font-size: 0.84rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.12s ease;
+      user-select: none;
+      line-height: 1.35;
+      text-align: left;
+    }
+
+    .chip:hover {
+      border-color: var(--primary-border);
+      background: #eff6ff;
+    }
+
+    .chip.chip-warn {
+      border-color: #fecaca;
+      background: #fffafa;
+      color: #991b1b;
+    }
+
+    .chip.chip-warn:hover {
+      background: #fee2e2;
+      border-color: #f87171;
+    }
+
+    .chip.chip-warn.selected {
+      background: #dc2626;
+      color: #ffffff;
+      border-color: #dc2626;
+      box-shadow: 0 2px 8px rgba(220, 38, 38, 0.25);
+    }
+
+    .chip.selected {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(29, 78, 216, 0.22);
+    }
+
+    .custom-input-row {
+      margin-top: 8px;
+    }
+
+    .custom-input-row input {
+      width: 100%;
+      padding: 8px 11px;
+      border: 1px solid #cbd5e1;
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      background: #fff;
+      outline: none;
+    }
+
+    .custom-input-row input:focus {
+      border-color: var(--primary);
+    }
+
+    /* Current Category Live Mini Box */
+    .current-cat-preview {
+      background: #faf5ff;
+      border: 1px solid #d8b4fe;
+      border-left: 4px solid var(--purple);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      margin-top: 14px;
+      font-size: 0.86rem;
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    .current-cat-preview-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--purple);
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    /* Settings Bar */
+    .meta-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 10px;
+      padding: 12px;
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      margin-top: 14px;
+    }
+
+    .meta-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .meta-field label {
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .meta-field input,
+    .meta-field select {
+      padding: 7px 9px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 0.83rem;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+    }
+
+    
+    /* AI Studio & Real-time Revision Box */
+    .ai-studio-box {
+      background: linear-gradient(180deg, #f5f3ff 0%, #ffffff 100%);
+      border: 2px solid #c4b5fd;
+      border-radius: var(--radius-md);
+      padding: 13px 14px;
+      margin-bottom: 12px;
+    }
+
+    .ai-studio-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .ai-studio-title {
+      font-size: 0.88rem;
+      font-weight: 800;
+      color: #4c1d95;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .api-status-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #ede9fe;
+      color: #5b21b6;
+    }
+
+    .api-status-badge.connected {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .api-key-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px dashed #ddd6fe;
+    }
+
+    .api-key-input {
+      flex: 1;
+      min-width: 180px;
+      padding: 7px 10px;
+      border: 1px solid #c4b5fd;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+    }
+
+    .api-key-input:focus {
+      border-color: var(--purple);
+    }
+
+    .api-model-select {
+      padding: 7px 8px;
+      border: 1px solid #c4b5fd;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      background: #fff;
+      color: var(--text);
+      font-weight: 600;
+      outline: none;
+    }
+
+    .ai-preset-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .btn-ai-preset {
+      border: 1px solid #ddd6fe;
+      background: #ffffff;
+      color: #4c1d95;
+      padding: 7px 9px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.12s ease;
+      line-height: 1.3;
+    }
+
+    .btn-ai-preset:hover {
+      background: #ede9fe;
+      border-color: #a78bfa;
+    }
+
+    .ai-revision-row {
+      display: flex;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .ai-revision-input {
+      flex: 1;
+      padding: 8px 11px;
+      border: 1px solid #c4b5fd;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      background: #ffffff;
+      color: var(--text);
+      outline: none;
+    }
+
+    .ai-revision-input:focus {
+      border-color: var(--purple);
+      box-shadow: 0 0 0 3px rgba(109, 40, 217, 0.12);
+    }
+
+    .ai-Quick-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 6px;
+    }
+
+    .ai-quick-chip {
+      font-size: 0.72rem;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .ai-quick-chip:hover {
+      border-color: #c4b5fd;
+      color: var(--purple);
+      background: #faf5ff;
+    }
+
+    .ai-loading-bar {
+      display: none;
+      margin-top: 8px;
+      padding: 8px 10px;
+      border-radius: 6px;
+      background: #ede9fe;
+      color: #4c1d95;
+      font-size: 0.79rem;
+      font-weight: 700;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .ai-loading-bar.active {
+      display: flex;
+    }
+
+    /* Right Panel: Output Preview */
+    .preview-sticky {
+      position: sticky;
+      top: 16px;
+    }
+
+    .preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .preview-header h2 {
+      font-size: 1.02rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .reroll-banner {
+      background: var(--purple-soft);
+      border: 1px solid #c4b5fd;
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .reroll-banner-text {
+      font-size: 0.8rem;
+      color: #4c1d95;
+      font-weight: 600;
+    }
+
+    .section-toggles {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+      padding: 10px 12px;
+      background: var(--surface-alt);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+    }
+
+    .toggle-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.81rem;
+      font-weight: 600;
+      color: var(--text-sub);
+      cursor: pointer;
+    }
+
+    .report-box {
+      width: 100%;
+      min-height: 290px;
+      padding: 15px;
+      border: 1px solid #cbd5e1;
+      border-radius: var(--radius-md);
+      background: #fcfdff;
+      font-family: inherit;
+      font-size: 0.9rem;
+      line-height: 1.72;
+      color: var(--text);
+      resize: vertical;
+      outline: none;
+      margin-bottom: 12px;
+      transition: background-color 0.2s ease;
+    }
+
+    .report-box.flash {
+      background-color: #f3e8ff;
+    }
+
+    .report-box:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.12);
+    }
+
+    .preview-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .char-counter {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    /* Saved Records List */
+    .saved-section {
+      border-top: 1px solid var(--border);
+      padding-top: 14px;
+    }
+
+    .saved-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .saved-header h3 {
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .saved-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+
+    .saved-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      background: var(--surface-alt);
+      font-size: 0.82rem;
+    }
+
+    .saved-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .saved-card-text {
+      white-space: pre-wrap;
+      color: var(--text-sub);
+      font-size: 0.8rem;
+      line-height: 1.55;
+    }
+
+    /* Mobile Floating Bottom Action Bar */
+    .mobile-bottom-bar {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(15, 23, 42, 0.96);
+      color: #fff;
+      padding: 10px 12px;
+      z-index: 900;
+      box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.18);
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    @media (max-width: 960px) {
+      .mobile-bottom-bar {
+        display: flex;
+      }
+    }
+
+    .mobile-bar-info {
+      flex: 1;
+      min-width: 0;
+      cursor: pointer;
+    }
+
+    .mobile-bar-title {
+      font-size: 0.73rem;
+      color: #c4b5fd;
+      font-weight: 700;
+    }
+
+    .mobile-bar-snippet {
+      font-size: 0.78rem;
+      color: #f8fafc;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .mobile-bar-btns {
+      display: flex;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 76px;
+      left: 50%;
+      transform: translateX(-50%) translateY(10px);
+      background: #0f172a;
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.2s ease;
+      z-index: 999;
+      white-space: nowrap;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* 간결한 보고서 작성 화면 */
+    :root { --bg:#f2f5f5; --surface:#fff; --surface-alt:#f6f8f8; --primary:#165f5b; --primary-soft:#e3f1ef; --primary-border:#8bbdb8; --accent:#165f5b; --accent-soft:#e3f1ef; --purple:#165f5b; --purple-soft:#e3f1ef; --text:#202f30; --text-sub:#405657; --text-muted:#526869; --border:#d8e2e1; --shadow:none; }
+    body { padding:24px; font-size:15px; }
+    .app-container { max-width:1440px; }
+    .header { background:transparent; border:0; box-shadow:none; padding:4px 0 20px; margin:0; align-items:flex-start; }
+    .header-title h1 { font-size:1.55rem; letter-spacing:-.025em; }
+    .header-title p { font-size:.93rem; margin-top:5px; }
+    .header-tools { margin-left:auto; }
+    summary { cursor:pointer; font-weight:700; color:var(--primary); padding:10px 0; }
+    summary:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline:3px solid #589d97; outline-offset:2px; }
+    .header-actions { padding:8px 0; }
+    .prev-report-panel, .panel { border:1px solid var(--border); background:#fff; box-shadow:none; border-radius:12px; }
+    .prev-report-panel { padding:16px 20px; margin-bottom:16px; }
+    .prev-panel-top { align-items:center; }
+    .prev-panel-title { font-size:1rem; }
+    .month-pill { min-height:38px; }
+    .main-grid { gap:16px; align-items:start; }
+    .panel { padding:22px; }
+    .tabs-label { font-size:1.1rem; color:var(--text); }
+    .tabs { gap:6px; }
+    .tab-btn { border-radius:8px; min-height:48px; box-shadow:none; }
+    .tab-btn.active { background:var(--primary-soft); border-color:var(--primary); color:var(--primary); }
+    .step-group { border:0; border-top:1px solid var(--border); border-radius:0; background:transparent; padding:16px 0; margin:0; box-shadow:none; }
+    .step-header { margin-bottom:8px; }
+    .step-title { font-size:1rem; }
+    .step-num { background:transparent; color:var(--primary); }
+    .step-hint { font-size:.88rem; color:var(--text-muted); }
+    .step-select { width:100%; min-height:44px; border:1px solid #aebfbd; border-radius:8px; background:#fff; color:var(--text); padding:9px 12px; font:inherit; }
+    .custom-input-row input { min-height:40px; font-size:.9rem; }
+    .btn-mini-reroll { font-size:.82rem; }
+    .current-cat-preview { background:#f5f8f7; border:0; border-radius:8px; }
+    .meta-bar { margin-top:0; }
+    .disclosure { border-top:1px solid var(--border); margin-top:12px; }
+    .disclosure > summary { font-size:.94rem; }
+    .prev-input-grid { margin-top:8px; }
+    .preview-header h2 { font-size:1.2rem; }
+    .reroll-banner { background:transparent; border:0; border-radius:0; padding:8px 0; }
+    .reroll-banner-text { font-size:.88rem; }
+    .ai-studio-box { background:#f6f8f8; border:0; border-radius:8px; margin:0 0 12px; }
+    .report-box { min-height:320px; font-size:1rem; line-height:1.8; border-color:#bdcecc; }
+    .btn { min-height:38px; font-size:.88rem; box-shadow:none; }
+    .btn-primary, .btn-purple, .btn-accent { background:var(--primary); border-color:var(--primary); color:#fff; }
+    .section-toggles { margin-top:14px; }
+    .saved-section { border:0; padding-top:0; }
+    ::selection { background:#bce0dc; color:#143b39; }
+    @media (max-width:800px) { body { padding:16px 14px 100px; } .header-title h1 { font-size:1.3rem; } .header-tools { margin-left:0; } .panel { padding:16px; } .prev-report-panel { padding:14px 16px; } .report-box { min-height:260px; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior:auto !important; transition:none !important; animation:none !important; } }
+
+
+    /* Neutral document palette */
+    :root { --bg:#f5f5f7; --surface:#fff; --surface-alt:#f7f7f9; --primary:#364d84; --primary-soft:#eef1f8; --primary-border:#b6c0d6; --accent:#364d84; --accent-soft:#eef1f8; --purple:#364d84; --purple-soft:#eef1f8; --text:#252832; --text-sub:#454a57; --text-muted:#5c6270; --border:#e1e2e7; }
+    body { background:var(--bg); caret-color:var(--primary); }
+    .header-title h1 { color:#222631; }
+    summary { color:#424b60; }
+    .prev-panel-title { color:#252832; }
+    .month-pill { color:#505768; background:#fff; border-color:#dadde5; }
+    .month-pill:hover { color:#273852; background:#f4f5f8; border-color:#acb6c7; }
+    .month-pill.active { color:#fff; background:#343d50; border-color:#343d50; }
+    .tab-btn { background:#fafafb; color:#424955; border-color:#e1e2e7; }
+    .tab-btn.active { color:#273a61; background:#eef1f8; border-color:#8493b4; }
+    .tab-count { background:#e5e8ee; color:#4b566c; }
+    .step-num { color:#687184; }
+    .step-select { border-color:#c9cdd6; }
+    .step-hint { color:#5c6270; }
+    .btn-mini-reroll { color:#505a6d; background:#f4f5f7; border-color:#e0e2e7; }
+    .btn-mini-reroll:hover { background:#e9ebef; }
+    .btn-purple, .btn-accent { color:#3d4658; background:#f4f5f7; border-color:#d9dce3; }
+    .btn-purple:hover, .btn-accent:hover { color:#273852; background:#e9ebf0; border-color:#bfc6d2; }
+    .btn-primary { color:#fff; background:#364d84; border-color:#364d84; }
+    .btn-primary:hover { background:#293d6e; }
+    .reroll-banner-text { color:#5c6270; }
+    .current-cat-preview, .ai-studio-box, .section-toggles { background:#f7f7f9; border-color:#e1e2e7; }
+    .report-box { border-color:#d4d7df; }
+    .prev-growth-box { background:#fafafb; border-color:#e1e2e7; }
+    .growth-chip { color:#414858; background:#fff; border-color:#d8dce4; }
+    .growth-chip:hover { background:#f2f4f8; border-color:#9ba9c2; }
+    .growth-chip.selected { background:#364d84; border-color:#364d84; color:#fff; }
+    .detected-tag { background:#f1f2f5; color:#51596a; }
+    .ai-preset-grid button, .ai-quick-chip { color:#424b60; background:#fff; border-color:#d9dce3; }
+    .api-status-badge { background:#eceef2; color:#4f5767; }
+    .mobile-bottom-bar { background:#292e39; }
+    .mobile-bar-title, .mobile-bar-snippet { color:#f5f5f7; }
+    input[type="checkbox"] { accent-color:#364d84; }
+    summary:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline-color:#7187b7; }
+    ::selection { background:#dce4f4; color:#263958; }
+
+
+    /* Violet ink and pale lilac distinguish the editor from the report sheet. */
+    :root { --bg:#eae7f3; --surface:#fff; --surface-alt:#f6f3fb; --primary:#55418d; --primary-soft:#eee9fa; --primary-border:#b5a6d6; --accent:#55418d; --accent-soft:#eee9fa; --purple:#55418d; --purple-soft:#eee9fa; --text:#282437; --text-sub:#4f4960; --text-muted:#625b70; --border:#ded9e9; }
+    body { background:#eae7f3; color:var(--text); caret-color:var(--primary); }
+    .header { padding:16px 4px 24px; }
+    .header-title h1 { color:#33284c; font-size:1.65rem; }
+    .header-title p { color:#5d5571; }
+    .header-tools summary, summary { color:#594a77; }
+    .prev-report-panel { background:#f8f6fc; border-color:#d6cfe5; }
+    .prev-panel-title { color:#403454; }
+    .month-pill { color:#53496a; border-color:#d4cbe2; background:#fff; }
+    .month-pill:hover { color:#40305d; background:#eee9f8; border-color:#a999c8; }
+    .month-pill.active { color:#fff; background:#55418d; border-color:#55418d; }
+    .panel { border-color:#d8d2e3; }
+    .preview-sticky { background:#f8f6fc; }
+    .tabs-label, .preview-header h2 { color:#33284c; }
+    .tab-btn { background:#faf9fc; color:#4f4860; border-color:#e1dcea; }
+    .tab-btn.active { color:#493675; background:#ede7f9; border-color:#8d78bc; }
+    .tab-count { color:#514374; background:#e3dcf2; }
+    .step-num { color:#756397; }
+    .step-select { border-color:#c8bfd6; }
+    .step-select:focus { border-color:#6e589f; }
+    .btn-mini-reroll { color:#594b72; background:#f3f0f8; border-color:#e4ddef; }
+    .btn-mini-reroll:hover { background:#e9e2f3; }
+    .btn-purple, .btn-accent { color:#54466c; background:#f2eef8; border-color:#dcd4e8; }
+    .btn-purple:hover, .btn-accent:hover { color:#3d2e5b; background:#e8e0f3; border-color:#bbaaca; }
+    .btn-primary { color:#fff; background:#55418d; border-color:#55418d; }
+    .btn-primary:hover { background:#43316f; }
+    .current-cat-preview, .ai-studio-box, .section-toggles { background:#f3eff9; border-color:#e2daed; }
+    .report-box { background:#fff; border-color:#d9d2e5; }
+    .prev-growth-box { background:#faf8fd; border-color:#e1daec; }
+    .growth-chip { color:#4d435e; background:#fff; border-color:#ddd4e8; }
+    .growth-chip:hover { background:#f3eef9; border-color:#ad9ac8; }
+    .growth-chip.selected { color:#fff; background:#55418d; border-color:#55418d; }
+    .detected-tag, .api-status-badge { color:#574a6d; background:#ece6f4; }
+    .ai-preset-grid button, .ai-quick-chip { color:#514365; background:#fff; border-color:#dbd2e6; }
+    .mobile-bottom-bar { background:#332b41; }
+    .mobile-bar-title, .mobile-bar-snippet { color:#fff; }
+    input[type="checkbox"] { accent-color:#55418d; }
+    summary:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline-color:#8c76ba; }
+    ::selection { background:#ddd0f2; color:#35254d; }
+    @media (max-width:800px) { .header-title h1 { font-size:1.3rem; } }
+
+
+    /* Neutral workspace with blue reserved for selection and the main action. */
+    :root { --bg:#f3f4f6; --surface:#fff; --surface-alt:#f8f9fa; --primary:#315a9b; --primary-soft:#edf3fc; --primary-border:#aabdd8; --accent:#315a9b; --accent-soft:#edf3fc; --purple:#315a9b; --purple-soft:#edf3fc; --text:#20242b; --text-sub:#454d59; --text-muted:#59616d; --border:#dfe3e8; }
+    body { background:var(--bg); color:var(--text); caret-color:var(--primary); }
+    .header-title h1, .tabs-label, .preview-header h2, .prev-panel-title { color:#20242b; }
+    .header-title p { color:#59616d; }
+    summary, .header-tools summary { color:#364456; }
+    .prev-report-panel, .panel, .preview-sticky { background:#fff; border-color:#dfe3e8; }
+    .month-pill { color:#485260; border-color:#d8dfe7; background:#fff; }
+    .month-pill:hover { color:#254574; background:#f2f5fa; border-color:#a6b8d0; }
+    .month-pill.active { color:#fff; background:#303c50; border-color:#303c50; }
+    .tab-btn { color:#424b57; background:#f8f9fa; border-color:#e2e5e9; }
+    .tab-btn.active { color:#254574; background:#edf3fc; border-color:#9eb4d2; }
+    .tab-count { color:#4e6078; background:#e5ebf3; }
+    .step-num { color:#586a82; }
+    .step-select { border-color:#c7cdd5; }
+    .btn-mini-reroll { color:#4d5967; background:#f5f6f8; border-color:#e0e3e7; }
+    .btn-mini-reroll:hover { background:#e9edf1; }
+    .btn-purple, .btn-accent { color:#414d5d; background:#f5f6f8; border-color:#d9dee5; }
+    .btn-purple:hover, .btn-accent:hover { color:#253d5a; background:#e9edf2; border-color:#b9c3d0; }
+    .btn-primary { color:#fff; background:#315a9b; border-color:#315a9b; }
+    .btn-primary:hover { background:#24477f; }
+    .current-cat-preview, .ai-studio-box, .section-toggles { background:#f7f8fa; border-color:#e2e5e9; }
+    .report-box { background:#fff; border-color:#cfd5dd; }
+    .prev-growth-box { background:#fff; border:0; padding:0; }
+    .growth-group { padding:14px 0; margin:0; border:0; border-bottom:1px solid #e5e8ec; }
+    .growth-group:last-child { border-bottom:0; }
+    .growth-group-header { display:flex; flex-direction:column; align-items:flex-start; gap:4px; margin-bottom:8px; color:#20242b; font-size:.95rem; }
+    .detected-tag { padding:0; background:transparent; color:#59616d; font-size:.85rem; font-weight:400; }
+    .prev-textarea { border-color:#c7cdd5; }
+    .growth-select { width:100%; min-height:44px; padding:9px 12px; border:1px solid #c7cdd5; border-radius:8px; background:#fff; color:#20242b; font:inherit; }
+    .growth-selection { margin:8px 0 0; color:#454d59; font-size:.88rem; line-height:1.5; }
+    .api-status-badge { color:#4b5663; background:#edf0f3; }
+    .ai-preset-grid button, .ai-quick-chip { color:#414d5d; background:#fff; border-color:#d9dee5; }
+    .mobile-bottom-bar { background:#29313d; }
+    .mobile-bar-title, .mobile-bar-snippet { color:#fff; }
+    input[type="checkbox"] { accent-color:#315a9b; }
+    summary:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline-color:#7696c7; }
+    ::selection { background:#d5e3f7; color:#203a60; }
+
+
+    .ai-studio-box { padding:16px; background:#f7f8fa; border:0; }
+    .ai-studio-header { display:flex; align-items:center; gap:8px; flex-wrap:wrap; border:0; margin:0 0 14px; padding:0; }
+    .ai-studio-title { color:#20242b; font-size:1rem; }
+    .api-status-badge, .api-status-badge.connected { background:#e9edf2; color:#455263; font-size:.82rem; }
+    .ai-label { display:block; margin:14px 0 6px; color:#303a48; font-size:.9rem; font-weight:700; }
+    .ai-choice-row, .ai-revision-row { display:flex; gap:8px; }
+    .ai-choice-row select, .ai-revision-input { min-width:0; flex:1; min-height:42px; padding:9px 11px; background:#fff; border:1px solid #c7cdd5; border-radius:8px; color:#20242b; font:inherit; }
+    .ai-choice-row .btn, .ai-revision-row .btn { min-height:42px; }
+    .ai-preset-grid[hidden] { display:none; }
+    .ai-settings, .ai-examples { border-top:1px solid #dfe3e8; margin-top:14px; }
+    .ai-settings summary, .ai-examples summary { font-size:.88rem; }
+    .ai-help { color:#59616d; font-size:.85rem; margin-bottom:8px; }
+    .api-key-row { border:0; padding:0 0 8px; }
+    .api-key-input, .api-model-select { border-color:#c7cdd5; min-height:40px; }
+    .ai-quick-chip { font-size:.85rem; min-height:36px; }
+    #btnCopyForPaidGemini { background:#fff; color:#315a9b; border-color:#b9c9dc; min-height:40px; }
+
+    .prev-context-note { color:var(--text-muted); font-size:.875rem; line-height:1.5; }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-title">
+        <h1>
+          아동 관찰·생활기록 보고서 생성기
+          
+          
+          
+        </h1>
+        <p>관찰 내용을 선택하고 보고서를 작성하세요.</p>
+      </div>
+      <details class="header-tools"><summary>도구 더보기</summary><div class="header-actions">
+        <button type="button" class="btn btn-purple" id="btnRerollTop">🔄 같은 특성·다른 느낌으로 새로 뽑기</button>
+        <button type="button" class="btn" id="btnLoadSample">📌 원본 예시문 복원</button>
+        <button type="button" class="btn" id="btnRandomize">🎲 특성 추천 조합</button>
+        <button type="button" class="btn" id="btnReset">초기화</button>
+      </div>
+    </details>
+    </header>
+
+    <!-- NEW: Previous Month Report Input & 6-Month Growth Bridge Panel -->
+    <section class="prev-report-panel">
+      <div class="prev-panel-top">
+        <div class="prev-panel-title">
+          <span>작성 회차</span>
+          
+        </div>
+        <div class="month-pills" id="monthPills">
+          <span style="font-size:0.76rem; font-weight:700; color:#5c6270; margin-right:2px;">작성 회차:</span>
+          <button type="button" class="month-pill active" data-month="none">회차 무관(기본)</button>
+          <button type="button" class="month-pill" data-month="1">1개월차</button>
+          <button type="button" class="month-pill" data-month="2">2개월차</button>
+          <button type="button" class="month-pill" data-month="3">3개월차</button>
+          <button type="button" class="month-pill" data-month="4">4개월차</button>
+          <button type="button" class="month-pill" data-month="5">5개월차</button>
+          <button type="button" class="month-pill" data-month="6">6개월차(만기)</button>
+        </div>
+      </div>
+
+      <details class="disclosure"><summary>지난달 보고서와 변화 비교</summary><div class="prev-input-grid">
+        <!-- Left: Paste Previous Report -->
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <textarea id="prevReportInput" class="prev-textarea" placeholder="지난달 보고서를 붙여넣으세요."></textarea>
+          <p class="prev-context-note">이번 달 관찰 항목을 선택하지 않으면 전월 기록과 선택한 변화가 함께 표시됩니다. 관찰 항목을 추가하면 이번 달 내용으로 작성됩니다.</p>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button type="button" class="btn btn-accent" id="btnAnalyzePrev">지난달 보고서 분석</button>
+            <button type="button" class="btn" id="btnUseCurrentAsPrev" title="현재 완성된 보고서를 지난달 보고서 칸으로 가져와 다음 달 보고서를 이어서 작성합니다">현재 보고서로 다음 달 작성</button>
+            <button type="button" class="btn" id="btnClearPrev">지우기</button>
+          </div>
+        </div>
+
+        <!-- Right: Recommended Monthly Progression Chips -->
+        <div class="prev-growth-box" id="prevGrowthBox">
+
+      <div class="growth-group">
+        <div class="growth-group-header">
+          <span>1. [또래·공동체 관계] 전월 대비 이번 달 변화·성장 선택</span>
+          <span class="detected-tag">📌 전월 감지: 원만하나 깊은 관계보다 일정한 거리 유지</span>
+        </div>
+        <div class="chips-wrap">
+          <button type="button" class="growth-chip" data-growth-cat="peer" data-growth-id="mp_dist_1"><span class="growth-badge">🌱 소폭 성장</span><span>경계심을 조금씩 늦추고 마음이 맞는 또래 아동에게 먼저 속내를 나누기 시작함</span></button><button type="button" class="growth-chip" data-growth-cat="peer" data-growth-id="mp_dist_2"><span class="growth-badge">📈 뚜렷한 성장</span><span>심리적 거리 두기를 극복하고 또래 아동들과 깊은 신뢰·유대감을 형성함</span></button><button type="button" class="growth-chip" data-growth-cat="peer" data-growth-id="mp_dist_3"><span class="growth-badge">➡️ 안정 유지</span><span>적정한 거리를 유지하면서도 마찰 없이 유연하고 원만한 관계를 지속함</span></button><button type="button" class="growth-chip" data-growth-cat="peer" data-growth-id="mp_dist_4"><span class="growth-badge">➖ 변화 없음</span><span>지난 회차와 비교해 변화 없이 표면적 대화에만 머물며 일정한 거리를 그대로 유지함</span></button><button type="button" class="growth-chip" data-growth-cat="peer" data-growth-id="mp_dist_5"><span class="growth-badge">📉 오히려 악화</span><span>지난 회차보다 오히려 거리감이 더 멀어지고 타 아동과의 교류를 피하며 고립되는 경향 심화</span></button><button type="button" class="growth-chip" data-growth-cat="peer" data-growth-id="mp_gen_p1"><span class="growth-badge">📈 한층 성숙</span><span>전월보다 또래 아동 수용 폭이 더욱 넓어지고 갈등을 중재·배려하는 여유가 생김</span></button><button type="button" class="growth-chip" data-growth-cat="peer" data-growth-id="mp_gen_p2"><span class="growth-badge">🌱 점진적 호전</span><span>전월에 간혹 보이던 신경전·방어적 태도가 줄어들고 대화가 부드러워짐</span></button><button type="button" class="growth-chip" data-growth-cat="peer" data-growth-id="mp_gen_p3"><span class="growth-badge">➖ 변화 없음</span><span>지난 회차와 비교해 뚜렷한 변화 없이 이전 달과 동일한 또래 관계 양상이 그대로 유지됨</span></button><button type="button" class="growth-chip" data-growth-cat="peer" data-growth-id="mp_gen_p4"><span class="growth-badge">📉 오히려 악화</span><span>지난 회차까지는 무난했으나 이번 달 들어 타 아동과의 마찰·강압적 태도가 늘어나는 등 관계 악화</span></button>
+        </div>
+      </div>
+    
+
+      <div class="growth-group">
+        <div class="growth-group-header">
+          <span>2. [수업·직업훈련] 전월 대비 이번 달 변화·성장 선택</span>
+          <span class="detected-tag">📌 전월 감지: 이해도는 양호하나 깊은 사고 활동 회피·자기주도 해결 보완 필요</span>
+        </div>
+        <div class="chips-wrap">
+          <button type="button" class="growth-chip" data-growth-cat="class" data-growth-id="mc_think_1"><span class="growth-badge">🌱 소폭 성장</span><span>사고가 필요한 과제에서도 바로 포기하지 않고 교사의 힌트를 받아 끝까지 참여함</span></button><button type="button" class="growth-chip" data-growth-cat="class" data-growth-id="mc_think_2"><span class="growth-badge">📈 뚜렷한 성장</span><span>전월 보완점(사고 회피)을 극복하고, 어려운 실습·필기 과제도 스스로 고민해 완수함</span></button><button type="button" class="growth-chip" data-growth-cat="class" data-growth-id="mc_think_3"><span class="growth-badge">📈 자격증 진전</span><span>선호하던 실습 흥미를 자격증 취득 목표로 연결하여 필기·실기 준비에 매진함</span></button><button type="button" class="growth-chip" data-growth-cat="class" data-growth-id="mc_think_4"><span class="growth-badge">➖ 변화 없음</span><span>지난 회차와 비교해 변화 없이 신체·실습만 선호하고, 사고가 필요한 활동은 여전히 간단히 넘김</span></button><button type="button" class="growth-chip" data-growth-cat="class" data-growth-id="mc_think_5"><span class="growth-badge">📉 오히려 악화</span><span>지난 회차보다 수업 태도가 오히려 나빠져 조금만 어려운 과제도 아예 거부하거나 포기함</span></button><button type="button" class="growth-chip" data-growth-cat="class" data-growth-id="mc_gen_c1"><span class="growth-badge">📈 숙련도 향상</span><span>전월보다 실습 기능 숙련도와 과제 완성도가 한 단계 높아지고 자신감이 붙음</span></button><button type="button" class="growth-chip" data-growth-cat="class" data-growth-id="mc_gen_c2"><span class="growth-badge">➖ 변화 없음</span><span>지난 회차와 비교해 수업 참여도나 과제 수행 태도에서 뚜렷한 변화 없이 기존 모습 유지</span></button><button type="button" class="growth-chip" data-growth-cat="class" data-growth-id="mc_gen_c3"><span class="growth-badge">📉 오히려 악화</span><span>지난 회차보다 수업 집중도와 참여 의욕이 눈에 띄게 떨어지고 태도가 불성실해짐</span></button>
+        </div>
+      </div>
+    
+        </div>
+      </div>
+    </details></section>
+
+    <!-- Main Content -->
+    <div class="main-grid">
+      <!-- Left: Option Selector -->
+      <section class="panel">
+        <div class="tabs-label">
+          <span>관찰 영역을 선택하세요</span>
+          <span id="activeCatStatus" style="color:var(--text-muted); font-weight:600;">[1. 또래·공동체 관계]</span>
+        </div>
+
+        <!-- Category Tabs -->
+        <div class="tabs" id="categoryTabs">
+
+      <button type="button" class="tab-btn active" data-cat-id="peer">
+        <div class="tab-top-row">
+          <span>또래·공동체</span>
+          <span class="tab-count">4/4</span>
+        </div>
+        <span style="font-size:0.72rem; color:var(--accent); font-weight:600;">● 보고서 포함됨</span>
+      </button>
+    
+
+      <button type="button" class="tab-btn" data-cat-id="class">
+        <div class="tab-top-row">
+          <span>수업·직업훈련</span>
+          <span class="tab-count">3/4</span>
+        </div>
+        <span style="font-size:0.72rem; color:var(--accent); font-weight:600;">● 보고서 포함됨</span>
+      </button>
+    
+
+      <button type="button" class="tab-btn" data-cat-id="life">
+        <div class="tab-top-row">
+          <span>생활관 규율·일상</span>
+          <span class="tab-count">3/3</span>
+        </div>
+        <span style="font-size:0.72rem; color:var(--text-muted); font-weight:600;">● 보고서 제외됨</span>
+      </button>
+    
+
+      <button type="button" class="tab-btn" data-cat-id="trait">
+        <div class="tab-top-row">
+          <span>정서·성찰·자립</span>
+          <span class="tab-count">3/3</span>
+        </div>
+        <span style="font-size:0.72rem; color:var(--text-muted); font-weight:600;">● 보고서 제외됨</span>
+      </button>
+    
+        </div>
+
+        <!-- Dynamic Steps Area -->
+        <div id="stepsContainer">
+
+      <div class="step-group">
+        <div class="step-header">
+          <div class="step-title-row">
+            <div class="step-title">
+              <span class="step-num">1</span>
+              <span>전반적인 또래 및 공동체 관계</span>
+            </div>
+            <button type="button" class="btn-mini-reroll" data-reroll-step="peer_overall">🔄 이 문장만 다른 표현으로</button>
+          </div>
+          <div class="step-hint">생활관 및 교육 시간 중 또래 아동들과 어울리는 기본 모습</div>
+        </div>
+        <div class="chips-wrap">
+          <button type="button" class="chip selected" data-step-id="peer_overall" data-opt-id="p1_1">전반적으로 원만·두루 대화 유지 (예시 기본)</button><button type="button" class="chip" data-step-id="peer_overall" data-opt-id="p1_2">성향 맞는 소수 아동과 집중 교류</button><button type="button" class="chip" data-step-id="peer_overall" data-opt-id="p1_3">활발함·분위기를 주도하며 어울림</button><button type="button" class="chip" data-step-id="peer_overall" data-opt-id="p1_4">과묵·조용히 개인 시간 선호</button><button type="button" class="chip" data-step-id="peer_overall" data-opt-id="p1_5">실무자·교사 중재 시 안정적 참여</button><button type="button" class="chip chip-warn" data-step-id="peer_overall" data-opt-id="p1_6">⚠️ 대인관계를 전혀 맺지 못하고 고립됨</button><button type="button" class="chip chip-warn" data-step-id="peer_overall" data-opt-id="p1_7">⚠️ 폭력적·강압적 태도로 또래 관계 마찰 심화</button>
+        </div>
+        <div class="custom-input-row">
+          <input type="text" data-custom-step="peer_overall" placeholder="➕ 이 단계에 직접 덧붙일 개별 관찰 문장 입력 (선택)" />
+        </div>
+      </div>
+    
+
+      <div class="step-group">
+        <div class="step-header">
+          <div class="step-title-row">
+            <div class="step-title">
+              <span class="step-num">2</span>
+              <span>관계 맺기 특성 및 상호작용 경향</span>
+            </div>
+            <button type="button" class="btn-mini-reroll" data-reroll-step="peer_tendency">🔄 이 문장만 다른 표현으로</button>
+          </div>
+          <div class="step-hint">거리감, 폭력성·강압성, 관계 단절, 동조 성향, 갈등 대처 방식 등</div>
+        </div>
+        <div class="chips-wrap">
+          <button type="button" class="chip selected" data-step-id="peer_tendency" data-opt-id="p2_1">깊은 관계보다 일정한 거리 유지 (예시 기본)</button><button type="button" class="chip" data-step-id="peer_tendency" data-opt-id="p2_2">자기주장·우위를 점하려는 모습 간혹 나타남</button><button type="button" class="chip" data-step-id="peer_tendency" data-opt-id="p2_3">주도적인 또래 분위기에 쉽게 동조</button><button type="button" class="chip" data-step-id="peer_tendency" data-opt-id="p2_4">마찰 시 방어적 태도·순간적 감정 반응</button><button type="button" class="chip" data-step-id="peer_tendency" data-opt-id="p2_5">또래 아동을 배려하고 마찰을 피하려 노력</button><button type="button" class="chip chip-warn" data-step-id="peer_tendency" data-opt-id="p2_6">⚠️ 폭력성 및 강압적·위협적 태도 표출</button><button type="button" class="chip chip-warn" data-step-id="peer_tendency" data-opt-id="p2_7">⚠️ 약한 또래 압박·서열화 및 강압적 지시</button><button type="button" class="chip chip-warn" data-step-id="peer_tendency" data-opt-id="p2_8">⚠️ 의사소통 단절 및 타인 접촉 완전 회피·거부</button>
+        </div>
+        <div class="custom-input-row">
+          <input type="text" data-custom-step="peer_tendency" placeholder="➕ 이 단계에 직접 덧붙일 개별 관찰 문장 입력 (선택)" />
+        </div>
+      </div>
+    
+
+      <div class="step-group">
+        <div class="step-header">
+          <div class="step-title-row">
+            <div class="step-title">
+              <span class="step-num">3</span>
+              <span>입소 초기 대비 태도 변화</span>
+            </div>
+            <button type="button" class="btn-mini-reroll" data-reroll-step="peer_change">🔄 이 문장만 다른 표현으로</button>
+          </div>
+          <div class="step-hint">입소 초반과 비교한 현재의 변화 또는 문제 지속 여부</div>
+        </div>
+        <div class="chips-wrap">
+          <button type="button" class="chip selected" data-step-id="peer_change" data-opt-id="p3_1">초기 강한 자기과시 → 최근 상대 이해·수용 (예시 기본)</button><button type="button" class="chip" data-step-id="peer_change" data-opt-id="p3_2">초기 경계심·방어적 → 최근 라포 형성 및 개방적 소통</button><button type="button" class="chip" data-step-id="peer_change" data-opt-id="p3_3">초기 거친 언행·마찰 → 최근 감정 조절·언어적 해결</button><button type="button" class="chip" data-step-id="peer_change" data-opt-id="p3_4">초기부터 현재까지 기복 없이 안정적 관계 유지</button><button type="button" class="chip chip-warn" data-step-id="peer_change" data-opt-id="p3_5">⚠️ 초기부터 현재까지 폭력성·강압적 태도 변함없이 유지</button><button type="button" class="chip chip-warn" data-step-id="peer_change" data-opt-id="p3_6">⚠️ 초기부터 현재까지 대인관계를 전혀 하지 못하고 단절 지속</button><button type="button" class="chip chip-warn" data-step-id="peer_change" data-opt-id="p3_7">⚠️ 초기에는 눈치를 보았으나 최근 오히려 강압성·마찰 증가</button>
+        </div>
+        <div class="custom-input-row">
+          <input type="text" data-custom-step="peer_change" placeholder="➕ 이 단계에 직접 덧붙일 개별 관찰 문장 입력 (선택)" />
+        </div>
+      </div>
+    
+
+      <div class="step-group">
+        <div class="step-header">
+          <div class="step-title-row">
+            <div class="step-title">
+              <span class="step-num">4</span>
+              <span>관계 영역 종합 평가 및 지도 방향</span>
+            </div>
+            <button type="button" class="btn-mini-reroll" data-reroll-step="peer_conclusion">🔄 이 문장만 다른 표현으로</button>
+          </div>
+          <div class="step-hint">또래·공동체 문단의 마무리 평가 및 향후 개입 방향 (8종 선택지)</div>
+        </div>
+        <div class="chips-wrap">
+          <button type="button" class="chip selected" data-step-id="peer_conclusion" data-opt-id="p4_1">태도가 유연해지고 관계 유지 방식에 긍정적 변화 확인 (예시 기본)</button><button type="button" class="chip" data-step-id="peer_conclusion" data-opt-id="p4_2">부정적 또래 동조 예방 및 주체적 의사표현 지도 필요</button><button type="button" class="chip" data-step-id="peer_conclusion" data-opt-id="p4_3">감정 조율 및 깊이 있는 신뢰 형성 지원 필요</button><button type="button" class="chip chip-warn" data-step-id="peer_conclusion" data-opt-id="p4_4">⚠️ 폭력성·강압적 행동 엄정 제한 및 공격성 교정 시급</button><button type="button" class="chip chip-warn" data-step-id="peer_conclusion" data-opt-id="p4_5">⚠️ 심각한 관계 단절 해소를 위한 기초 사회성 훈련·심리 개입 필요</button><button type="button" class="chip chip-warn" data-step-id="peer_conclusion" data-opt-id="p4_6">⚠️ 타인 권리 존중 및 공감 능력 향상 교육 병행 필요</button><button type="button" class="chip" data-step-id="peer_conclusion" data-opt-id="p4_7">집단 내 서열 의식 해체 및 비폭력 갈등 해결 습득 필요</button><button type="button" class="chip" data-step-id="peer_conclusion" data-opt-id="p4_8">원만한 관계 역량을 유지하며 건전한 협력 경험 확장 기대</button>
+        </div>
+        <div class="custom-input-row">
+          <input type="text" data-custom-step="peer_conclusion" placeholder="➕ 이 단계에 직접 덧붙일 개별 관찰 문장 입력 (선택)" />
+        </div>
+      </div>
+    
+        </div>
+
+        <!-- Current Category Live Sentence Preview -->
+        <div class="current-cat-preview">
+          <div class="current-cat-preview-title">
+            <span id="currentCatPreviewTitle">💬 [또래·공동체] 현재 조합된 문단</span>
+            <button type="button" class="btn btn-purple" style="padding:4px 10px; font-size:0.76rem;" id="btnRerollCat">🔄 이 영역 문장만 새로 뽑기</button>
+          </div>
+          <div id="currentCatPreviewText">▪ 또래 관계는 전반적으로 원만하며, 대부분의 또래와 대화를 나누고 관계를 이어 가는 모습이 관찰되고 있음. 다만 관계를 깊게 발전시키기보다는 일정한 거리를 유지하는 경향이 있음. 입소 초기에는 자신을 강하게 드러내려는 모습이 종종 나타났으나, 최근에는 상대방을 이해하고 받아들이려는 모습이 늘어나고 있음. 또래를 대하는 태도가 이전보다 유연해지고 있으며, 관계를 유지하는 방식에서도 긍정적인 변화가 확인되고 있음.</div>
+        </div>
+
+        <!-- Formatting & Meta Options -->
+        <details class="disclosure format-options"><summary>보고서 서식 설정</summary><div class="meta-bar">
+          <div class="meta-field">
+            <label for="childName">아동명 / 호실 (선택)</label>
+            <input type="text" id="childName" placeholder="예: 김OO (고2)" />
+          </div>
+          <div class="meta-field">
+            <label for="flowMode">문단 호흡·연결 방식</label>
+            <select id="flowMode">
+              <option value="standard" selected>독립 문장 서술형 (기본)</option>
+              <option value="connected">자연스러운 연결어·접속형</option>
+            </select>
+          </div>
+          <div class="meta-field">
+            <label for="bulletStyle">문단 시작 기호</label>
+            <select id="bulletStyle">
+              <option value="▪ " selected>▪ (사각 불릿 - 기본)</option>
+              <option value="• ">• (원형 불릿)</option>
+              <option value="- ">- (대시 기호)</option>
+              <option value="[영역명] ">[영역명] 표시</option>
+              <option value="">기호 없음</option>
+            </select>
+          </div>
+          <div class="meta-field">
+            <label for="endingStyle">문장 종결 어미</label>
+            <select id="endingStyle">
+              <option value="report" selected>보고서 개조식 (~관찰되고 있음)</option>
+              <option value="plain">서술형 (~관찰된다 / ~필요하다)</option>
+              <option value="polite">격식체 (~관찰되고 있습니다)</option>
+            </select>
+          </div>
+        </div></details>
+      </section>
+
+      <!-- Right: Live Preview & Export -->
+      <aside class="panel preview-sticky" id="previewSection">
+        <div class="preview-header">
+          <h2>보고서 미리보기</h2>
+          <div style="display:flex; gap:6px;">
+            <button type="button" class="btn btn-primary" id="btnCopyMain">복사</button>
+          </div>
+        </div>
+
+        <!-- Prominent Re-roll Banner -->
+        <div class="reroll-banner">
+          <span class="reroll-banner-text">선택 내용은 유지하고 표현을 바꿉니다.</span>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button type="button" class="btn btn-purple" style="padding:6px 11px; font-size:0.79rem;" id="btnRerollMain">다른 표현으로 바꾸기</button>
+            <button type="button" class="btn" style="padding:6px 10px; font-size:0.78rem;" id="btnUndoReport" title="직전 보고서 문장으로 되돌립니다">되돌리기</button>
+          </div>
+        </div>
+
+        <!-- NEW: Gemini API Live Refinement & Custom Modification Studio -->
+        <details class="disclosure ai-disclosure"><summary>문장 다듬기와 AI 도구</summary><div class="ai-studio-box">
+          <div class="ai-studio-header">
+            <div class="ai-studio-title">
+              <span>문장 다듬기</span>
+            </div>
+            <span class="api-status-badge" id="apiStatusBadge">⚪ 내장 고급 엔진 모드 (API 키 선택)</span>
+          </div>
+
+          <details class="ai-settings"><summary>Gemini 설정</summary><p class="ai-help">API 키를 입력하면 보고서가 Gemini로 전송됩니다.</p>
+          <div class="api-key-row">
+            <input type="password" id="geminiApiKey" class="api-key-input" placeholder="Gemini API 키" aria-label="Gemini API 키" />
+            <button type="button" class="btn" style="padding:6px 9px; font-size:0.75rem;" id="btnToggleKeyVis" aria-label="API 키 표시 전환">표시</button>
+            <select id="geminiModelSelect" class="api-model-select" title="호출할 Gemini 모델 선택">
+              <option value="gemini-3.5-flash-lite" selected>Gemini 3.5 Flash-Lite (빠름)</option>
+              <option value="gemini-3.8-flash">Gemini 3.8 Flash</option>
+              <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
+              <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
+            </select>
+            <button type="button" class="btn btn-purple" style="padding:6px 10px; font-size:0.76rem;" id="btnSaveApiKey">키 저장</button>
+          </div></details>
+
+          <!-- One-Click AI Style Upgrade Presets -->
+          <label class="ai-label" for="aiPreset">다듬는 방식</label>
+          <div class="ai-choice-row"><select id="aiPreset" aria-label="다듬는 방식"><option value="btnAiElevate">전문적인 문체</option><option value="btnAiComparePrev">지난달과 비교</option><option value="btnAiWarmTone">따뜻한 문체</option><option value="btnAiStrictTone">객관적인 문체</option></select><button type="button" class="btn" id="btnApplyPreset">적용</button></div>
+          <div class="ai-preset-grid" hidden>
+            <button type="button" class="btn-ai-preset" id="btnAiElevate">🏛️ 법원·기관 제출용 최고급 전문 문체로 격상</button>
+            <button type="button" class="btn-ai-preset" id="btnAiComparePrev">📈 지난달 보고서와 비교해 변화·성장 입체 서술</button>
+            <button type="button" class="btn-ai-preset" id="btnAiWarmTone">🌱 가능성·격려 중심의 심층 관찰 문체로 윤문</button>
+            <button type="button" class="btn-ai-preset" id="btnAiStrictTone">⚖️ 객관적·엄정한 사실 위주 보고 문체로 정돈</button>
+          </div>
+
+          <!-- Real-Time Natural Language Revision Request -->
+          <label class="ai-label" for="aiRevisionInput">직접 요청하기</label>
+          <div class="ai-revision-row">
+            <input type="text" id="aiRevisionInput" class="ai-revision-input" placeholder="수정하거나 추가할 내용을 입력하세요" />
+            <button type="button" class="btn btn-purple" style="white-space:nowrap;" id="btnRunAiRevision">반영</button>
+          </div>
+          <div style="margin-top:7px; display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+            <button type="button" class="btn btn-primary" style="width:100%; font-size:0.79rem; padding:7px 10px;" id="btnCopyForPaidGemini">
+              AI 채팅용 요청문 복사
+            </button>
+          </div>
+          <details class="ai-examples"><summary>요청 예시</summary><div class="ai-Quick-chips">
+            <button type="button" class="ai-quick-chip" data-prompt="문장 간 연결을 더욱 자연스럽고 격식 있는 고급 보고서 어휘로 다듬어줘">+ 고급 어휘로 문맥 다듬기</button>
+            <button type="button" class="ai-quick-chip" data-prompt="지난달 보고서와 겹치는 표현을 피하고 이번 달의 미세한 변화를 더 강조해줘">+ 전월 중복 표현 제거·변화 강조</button>
+            <button type="button" class="ai-quick-chip" data-prompt="자격증 실습에는 적극적이나 필기 이론 공부에는 교사의 독려가 필요하다는 내용을 추가해줘">+ 자격증 실기/필기 편차 추가</button>
+            <button type="button" class="ai-quick-chip" data-prompt="초기보다 욕설과 욱하는 빈도는 줄었으나 여전히 또래 간 자존심 신경전이 간혹 나타난다고 반영해줘">+ 욕설 감소·신경전 잔존 반영</button>
+          </div>
+          </details><div class="ai-loading-bar" id="aiLoadingBar">
+            <span id="aiLoadingText">⏳ 제미나이 AI가 요청사항을 반영해 고급 보고서 문장으로 다듬고 있습니다...</span>
+          </div>
+        </div>
+
+        </details>
+        <!-- Include/Exclude Category Checkboxes -->
+        <div class="section-toggles" id="sectionToggles"></div>
+
+        <textarea id="reportOutput" class="report-box">▪ 또래 관계는 전반적으로 원만하며, 대부분의 또래와 대화를 나누고 관계를 이어 가는 모습이 관찰되고 있음. 다만 관계를 깊게 발전시키기보다는 일정한 거리를 유지하는 경향이 있음. 입소 초기에는 자신을 강하게 드러내려는 모습이 종종 나타났으나, 최근에는 상대방을 이해하고 받아들이려는 모습이 늘어나고 있음. 또래를 대하는 태도가 이전보다 유연해지고 있으며, 관계를 유지하는 방식에서도 긍정적인 변화가 확인되고 있음.
+
+▪ 수업 태도는 전반적으로 양호하며, 대부분의 수업에서 높은 이해도를 보이고 교사의 안내에 따라 학습활동에 참여하고 있음. 신체활동 중심의 수업을 선호하며, 충분한 사고가 필요한 활동에서는 비교적 간단하고 부담이 적은 방식으로 참여하려는 경향이 관찰되고 있음. 학습 내용을 이해하는 능력은 양호하나, 생각하는 과정에 충분히 참여하고 스스로 해결 방법을 찾아가는 태도에는 보완이 필요함.</textarea>
+
+        <div class="preview-footer">
+          <span class="char-counter" id="charCount">449자 (공백 포함)</span>
+          <div style="display:flex; gap:8px;">
+            <button type="button" class="btn btn-accent" id="btnSaveChild">기록함에 저장</button>
+            <button type="button" class="btn" id="btnDownloadTxt">TXT 저장</button>
+          </div>
+        </div>
+
+        <!-- Saved List -->
+        <details class="disclosure"><summary>저장된 보고서</summary><div class="saved-section">
+          <div class="saved-header">
+            <h3>🗂️ 저장된 월별·아동별 보고서 (<span id="savedCount">0</span>건)</h3>
+            <button type="button" class="btn" style="padding:4px 10px; font-size:0.76rem;" id="btnCopyAllSaved">전체 일괄 복사</button>
+          </div>
+          <div class="saved-list" id="savedList">
+            <p style="font-size:0.81rem; color:var(--text-muted); text-align:center; padding:14px 0;">
+              1개월차~6개월차 보고서를 순서대로 저장해 두고 한눈에 비교하거나 복사할 수 있습니다.
+            </p>
+          </div>
+        </div>
+      </details></aside>
+    </div>
+  </div>
+
+  <!-- Mobile Sticky Bottom Bar -->
+  <div class="mobile-bottom-bar">
+    <div class="mobile-bar-info" id="mobileBarInfo">
+      <div class="mobile-bar-title" id="mobileBarStatus">보고서 2개 문단 완성 · 터치하여 전문 확인</div>
+      <div class="mobile-bar-snippet" id="mobileBarSnippet">▪ 또래 관계는 전반적으로 원만하며, 대부분의 또래와 대화를 나누고...</div>
+    </div>
+    <div class="mobile-bar-btns">
+      <button type="button" class="btn btn-purple" style="padding:7px 10px; font-size:0.76rem;" id="btnRerollMobile">🔄 새 표현</button>
+      <button type="button" class="btn" style="padding:7px 9px; font-size:0.76rem;" id="btnScrollPreview">전문</button>
+      <button type="button" class="btn btn-primary" style="padding:7px 11px; font-size:0.76rem;" id="btnCopyMobile">📋 복사</button>
+    </div>
+  </div>
+
+  <div id="toast" class="toast">복사되었습니다!</div>
+
+  <script>
+  (function() {
+    if (window.__REPORT_APP_INITIALIZED__) return;
+    window.__REPORT_APP_INITIALIZED__ = true;
+    const CATEGORIES = [{"id": "peer", "name": "1. 또래·공동체 관계", "shortName": "또래·공동체", "enabled": true, "steps": [{"id": "peer_overall", "title": "전반적인 또래 및 공동체 관계", "hint": "생활관 및 교육 시간 중 또래 아동들과 어울리는 기본 모습", "options": [{"id": "p1_1", "label": "전반적으로 원만·두루 대화 유지 (예시 기본)", "original": "또래 관계는 전반적으로 원만하며, 대부분의 또래와 대화를 나누고 관계를 이어 가는 모습이 관찰되고 있음.", "openers": ["또래 관계는 전반적으로 원만하며,", "공동체 내 교우 관계는 대체로 안정적이며,", "생활관 내 대인관계는 비교적 무난하여,", "또래 아동들과의 관계는 전반적으로 우호적이며,", "평소 또래들과 지내는 모습은 대체로 원만한 편으로,"], "cores": ["대부분의 또래와 대화를 나누고 관계를 이어 가는", "주변 아동들과 큰 마찰 없이 소통하며 일상적인 교류를 유지하는", "다양한 성향의 아동들과 두루 이야기를 나누며 자연스럽게 어울리는", "특정 대상을 가리지 않고 대다수 또래 아동과 무리 없이 대화하며 지내는", "공동생활 속에서 또래들과 원활하게 의사소통하며 유대를 이어 가는"], "closers": ["모습이 관찰되고 있음.", "모습이 확인되고 있음.", "태도를 보이고 있음.", "모습이 꾸준히 나타나고 있음.", "양상이 관찰됨."]}, {"id": "p1_2", "label": "성향 맞는 소수 아동과 집중 교류", "original": "또래 관계는 무난한 편이나, 폭넓게 어울리기보다는 성향이 비슷한 소수의 또래 아동과 집중적으로 교류하는 모습이 관찰되고 있음.", "openers": ["또래 관계는 대체로 무난한 편이나,", "집단 내 또래 아동들과 큰 갈등 없이 지내고 있으나,", "전반적인 교우 관계는 안정적인 편이지만,", "생활실 내 또래들과 무리 없이 지내나,"], "cores": ["폭넓게 어울리기보다는 성향이 비슷한 소수의 또래 아동과 집중적으로 교류하는", "다수의 또래와 두루 섞이기보다 마음이 맞는 일부 아동과 깊이 어울리는", "익숙하고 친밀감을 느끼는 소수 또래를 중심으로 대화를 나누며 시간을 보내는", "관심사가 비슷한 몇몇 또래 아동과 주로 단짝을 이루어 활동하는"], "closers": ["모습이 관찰되고 있음.", "경향이 확인되고 있음.", "모습을 보이고 있음.", "특성이 나타나고 있음."]}, {"id": "p1_3", "label": "활발함·분위기를 주도하며 어울림", "original": "사교성이 좋고 에너지가 높아 주변 또래들에게 먼저 다가서며, 공동 활동이나 일상 대화를 주도하는 모습이 관찰되고 있음.", "openers": ["사교성이 좋고 평소 에너지가 높아,", "대인관계에 적극적이고 쾌활한 성향으로,", "또래 집단 내 친화력과 활동성이 두드러져,", "주변 아동들에게 관심이 많고 표현이 활발하여,"], "cores": ["주변 또래들에게 먼저 다가서며 공동 활동이나 일상 대화를 주도하는", "운동이나 여가 시간에 또래 아동들을 이끌며 활기차게 분위기를 형성하는", "새로 입소한 아동이나 또래 아동들에게도 거리낌 없이 말을 건네며 빠르게 어울리는", "생활관 내에서 대화를 먼저 이끌고 또래 모임의 중심에 서려는"], "closers": ["모습이 관찰되고 있음.", "모습이 자주 확인되고 있음.", "특성을 보이고 있음.", "태도가 두드러지게 나타남."]}, {"id": "p1_4", "label": "과묵·조용히 개인 시간 선호", "original": "평소 말이 적고 차분한 성향으로, 또래 집단에 깊이 섞이기보다 조용히 개인 시간을 보내는 모습이 주로 관찰되고 있음.", "openers": ["평소 말이 적고 차분한 성향으로,", "전반적으로 과묵하고 조용한 기질을 지녀,", "다수가 모인 떠들썩한 자리보다는 정적인 분위기를 선호하여,", "감정 표현이나 말수가 비교적 적은 편으로,"], "cores": ["또래 집단에 깊이 섞이기보다 조용히 개인 시간을 보내는", "먼저 나서서 관계를 넓히기보다는 자신의 공간에서 차분히 머무르는", "타인과 불필요한 마찰을 피하며 혼자만의 여가나 휴식을 즐기는", "주변 상황을 조용히 살피며 소규모의 차분한 환경에서 안정감을 느끼는"], "closers": ["모습이 주로 관찰되고 있음.", "경향이 확인되고 있음.", "모습을 보이고 있음.", "편임."]}, {"id": "p1_5", "label": "실무자·교사 중재 시 안정적 참여", "original": "스스로 관계를 넓히는 데에는 다소 조심스러운 태도를 보이나, 담당 교사의 자연스러운 중재가 있을 때 무리 없이 어울리는 모습이 관찰되고 있음.", "openers": ["스스로 또래 관계를 넓히는 데에는 다소 조심스러운 태도를 보이나,", "자발적으로 또래 아동들에게 먼저 다가가는 빈도는 다소 낮은 편이나,", "낯선 또래 집단 속에서 스스로 대화를 시작하는 데에는 부담을 느끼나,", "단독으로는 교우 관계 형성에 다소 소극적인 모습을 보이기도 하나,"], "cores": ["담당 교사의 자연스러운 중재가 있을 때 무리 없이 어울리는", "실무자의 안내와 격려가 동반되면 공동 활동에 안정적으로 합류하는", "교사가 대화의 물꼬를 터 주었을 때 또래들과 편안하게 소통하는", "성인의 지지적인 개입 속에서 점차 주변 아동들과 상호작용을 이어 가는"], "closers": ["모습이 관찰되고 있음.", "모습이 확인되고 있음.", "반응을 보이고 있음.", "경향이 나타남."]}, {"id": "p1_6", "label": "⚠️ 대인관계를 전혀 맺지 못하고 고립됨", "original": "또래들과 대인관계를 전혀 형성하지 못하고 있으며, 공동체 생활 속에서도 주변 아동들과 어울리지 못한 채 고립되어 지내는 모습이 관찰되고 있음.", "openers": ["또래들과 대인관계를 전혀 형성하지 못하고 있으며,", "생활관 내 또래 아동들과 기본적인 교류조차 이루어지지 않고 있으며,", "대인관계 형성에 심각한 어려움을 보여 누구와도 어울리지 못하고,", "공동체 내에서 타인과 관계를 맺는 것을 전반적으로 거부하거나 회피하여,"], "cores": ["일과 및 여가 시간 내내 주변 아동들과 단절된 채 홀로 고립되어 지내는", "또래 집단 속에 전혀 섞이지 못하고 대화나 상호작용 없이 외톨이로 머무르는", "또래 아동들과의 접촉 자체를 피하며 생활실 내에서도 철저히 혼자 지내는", "사회적 상호작용이 전혀 이루어지지 않아 집단 내에서 완전히 겉도는"], "closers": ["모습이 관찰되고 있음.", "양상이 지속되고 있음.", "모습이 확인되고 있음.", "상태가 이어지고 있음."]}, {"id": "p1_7", "label": "⚠️ 폭력적·강압적 태도로 또래 관계 마찰 심화", "original": "또래 관계에서 폭력적이고 강압적인 태도를 빈번하게 드러내며, 주변 아동들에게 위압감을 조성하여 원만한 관계 형성이 이루어지지 않고 있음.", "openers": ["또래 관계 전반에서 폭력적이고 강압적인 태도를 빈번하게 드러내며,", "또래 아동들을 대할 때 힘을 앞세운 위압적이고 공격적인 언행을 일삼으며,", "평소 또래들에게 강압적인 자세로 일관하여 주변 아동들이 기피하고 있으며,", "공동생활 중 거친 폭력성과 위협적인 태도가 반복적으로 표출되어,"], "cores": ["생활관 내 긴장감을 유발하고 또래 아동들과 잦은 마찰을 빚는", "주변 또래들에게 위압감과 두려움을 조성하여 정상적인 교우 관계가 형성되지 못하는", "수시로 공격적인 마찰을 일으켜 공동체 분위기를 해치는", "일방적인 복종과 우위를 강요하여 또래 관계가 심각하게 왜곡되는"], "closers": ["모습이 관찰되고 있음.", "문제가 확인되고 있음.", "양상이 나타나고 있음.", "상태가 지속되고 있음."]}]}, {"id": "peer_tendency", "title": "관계 맺기 특성 및 상호작용 경향", "hint": "거리감, 폭력성·강압성, 관계 단절, 동조 성향, 갈등 대처 방식 등", "options": [{"id": "p2_1", "label": "깊은 관계보다 일정한 거리 유지 (예시 기본)", "original": "다만 관계를 깊게 발전시키기보다는 일정한 거리를 유지하는 경향이 있음.", "openers": ["다만 관계를 깊게 발전시키기보다는", "그러나 특정 또래와 깊이 밀착하기보다는", "한편으로는 자신의 깊은 속내를 드러내기보다", "다만 친밀도를 급격히 높이기보다는", "그러나 관계가 깊어지는 상황에서는"], "cores": ["일정한 거리를 유지하는", "적정한 심리적 거리를 두며 지내는", "스스로 정한 선을 지키며 신중하게 교류하는", "감정적인 거리를 일정 부분 유지하려는", "다소 조심스럽게 선을 두며 관계를 이어 가는"], "closers": ["경향이 있음.", "모습이 관찰되고 있음.", "편임.", "특성이 나타나고 있음.", "모습이 확인됨."]}, {"id": "p2_2", "label": "자기주장·우위를 점하려는 모습 간혹 나타남", "original": "다만 의견이 부딪힐 때 자신의 주장을 강하게 관철하려 하거나 또래 사이에서 우위를 점하려는 태도가 간혹 나타나기도 함.", "openers": ["다만 의견이 부딪히는 상황에서는", "그러나 공동 활동 중 의사결정이 필요할 때", "한편 자존심이 다소 강한 편이어서", "다만 또래들과 어울리는 과정에서"], "cores": ["자신의 주장을 강하게 관철하려 하거나 우위를 점하려는 태도가", "자신이 원하는 방식대로 분위기를 이끌고 주도권을 잡으려는 모습이", "상대의 의견을 수용하기보다 자신의 입장을 먼저 내세우는 경향이", "자존심을 앞세우며 쉽게 양보하지 않으려는 모습이"], "closers": ["간혹 나타나기도 함.", "종종 관찰되고 있음.", "확인되어 세심한 지도가 필요한 편임.", "일부 관찰되고 있음."]}, {"id": "p2_3", "label": "주도적인 또래 분위기에 쉽게 동조", "original": "자신의 주관을 뚜렷하게 밝히기보다는 친밀한 또래 아동이나 주도적인 또래의 의견에 쉽게 동조하며 따라가려는 경향이 관찰되고 있음.", "openers": ["다만 자신의 주관을 뚜렷하게 밝히기보다는", "그러나 집단 내에서 소외되거나 튀는 것을 부담스러워하여", "한편 거절이나 반대 의견 표현에 다소 서툴러", "다만 스스로 판단하여 행동하기보다는"], "cores": ["친밀한 또래 아동이나 주도적인 또래의 의견에 쉽게 동조하며 따라가려는", "주변 또래들의 분위기나 요구에 그대로 맞추어 행동하려는", "목소리가 큰 또래 아동의 주장에 휩쓸려 수동적으로 동참하는", "자신의 생각보다 또래 집단의 흐름을 우선시하여 따라가는"], "closers": ["경향이 관찰되고 있음.", "모습이 종종 나타나고 있음.", "경향이 있음.", "특성이 확인되고 있음."]}, {"id": "p2_4", "label": "마찰 시 방어적 태도·순간적 감정 반응", "original": "평소에는 무난하게 지내나, 사소한 오해나 불이익이 있다고 느낄 때 방어적인 태도를 취하거나 감정이 앞서는 모습이 간혹 관찰됨.", "openers": ["평소에는 무난하게 지내나,", "일상적인 상황에서는 원만하나,", "대체로 평온한 관계를 유지하지만,", "기분이 좋을 때는 협조적이나,"], "cores": ["사소한 오해나 불이익이 있다고 느낄 때 방어적인 태도를 취하거나 감정이 앞서는", "또래와 마찰이 생겼을 때 차분히 설명하기보다 순간적으로 날 선 반응을 보이는", "자신이 부당한 대우를 받았다고 여길 때 표정이 굳어지거나 대화를 피하려는", "갈등 상황에서 억울한 감정을 조절하지 못하고 즉각적으로 불만을 드러내는"], "closers": ["모습이 간혹 관찰됨.", "경향이 일부 나타나고 있음.", "모습이 종종 확인되고 있음.", "반응이 간혹 보임."]}, {"id": "p2_5", "label": "또래 아동을 배려하고 마찰을 피하려 노력", "original": "공동생활 속에서 또래 아동들의 기분을 잘 살피고 양보하며, 불필요한 마찰을 스스로 피하려는 성숙한 태도가 관찰되고 있음.", "openers": ["공동생활 속에서 또래 아동들의 기분을 잘 살피고 양보하며,", "연령과 성향이 다양한 생활관 내에서 예의를 지키며,", "주변 또래들의 반응과 분위기를 세심하게 고려하며,", "사소한 의견 차이가 생기는 상황에서도 한 걸음 물러서며,"], "cores": ["불필요한 마찰을 스스로 피하고 원만하게 조화를 이루려는", "갈등이 커지지 않도록 분위기를 부드럽게 넘기려는", "상대방을 배려하고 협조적인 태도로 관계를 유지하려는", "차분하고 성숙한 방식으로 또래 아동들과 균형을 맞추려는"], "closers": ["태도가 관찰되고 있음.", "모습이 돋보이고 있음.", "긍정적인 특성이 확인됨.", "모습을 보이고 있음."]}, {"id": "p2_6", "label": "⚠️ 폭력성 및 강압적·위협적 태도 표출", "original": "자신의 뜻대로 되지 않거나 심기가 불편할 때 거친 폭력성과 강압적인 태도를 드러내며, 위압적인 언행으로 또래들을 통제하려는 경향이 관찰되고 있음.", "openers": ["자신의 뜻대로 되지 않거나 심기가 불편할 때", "의견 충돌이나 사소한 갈등 상황이 발생하면", "일상 상호작용에서 자신의 요구를 관철하기 위해", "감정이 격해지거나 불만이 생겼을 때 참지 못하고"], "cores": ["거친 폭력성과 강압적인 태도를 드러내며 또래들을 위압적으로 통제하려는", "욕설과 위협적인 행동을 앞세워 상대방을 굴복시키려는 공격적인", "언어적·신체적 폭력성을 표출하며 주변 아동들에게 강압적으로 지시하려는", "힘과 위세를 과시하며 타인의 의사를 묵살하고 강압적으로 행동하는"], "closers": ["경향이 관찰되고 있음.", "모습이 빈번하게 확인되고 있음.", "양상이 뚜렷하게 나타나고 있음.", "문제가 지속적으로 관찰됨."]}, {"id": "p2_7", "label": "⚠️ 약한 또래 압박·서열화 및 강압적 지시", "original": "특히 자신보다 약해 보이는 또래에게 위압적인 언행을 보이거나 서열을 나누어 심부름과 복종을 강요하는 등 강압적인 관계 양상이 확인되고 있음.", "openers": ["특히 자신보다 체격이나 성향이 약해 보이는 또래를 대상으로", "생활실 내에서 아동들 간의 서열을 임의로 나누려 하며", "방어력이 약한 또래 아동에게 은근한 압박이나 위압감을 주며", "동등한 교우 관계 대신 힘에 의한 상하 관계를 만들려 하며"], "cores": ["위압적인 언행을 보이거나 일방적인 지시와 복종을 강요하는", "자신의 편의를 위해 심부름을 시키거나 강압적으로 행동을 통제하려는", "거친 어조로 눈치를 주며 상대방의 행동을 위축시키는", "자신의 우위를 확인하려는 듯 강압적이고 고압적인 태도를 취하는"], "closers": ["모습이 확인되고 있음.", "경향이 관찰되어 집중 지도가 이루어지고 있음.", "부적절한 관계 양상이 나타나고 있음.", "모습이 종종 포착되고 있음."]}, {"id": "p2_8", "label": "⚠️ 의사소통 단절 및 타인 접촉 완전 회피·거부", "original": "타인과의 대화나 눈맞춤 자체를 극도로 꺼리며, 또래 아동들이 먼저 다가와도 대답을 피하거나 자리를 뜨는 등 대인 접촉을 완전히 차단하려는 경향이 있음.", "openers": ["타인과의 대화나 눈맞춤 자체를 극도로 꺼리며,", "누군가와 관계를 맺거나 감정을 공유하는 것 자체에 강한 거부감을 보이며,", "기초적인 의사소통 기술과 관계 맺기 동기가 매우 부족하여,", "주변 아동들에게 마음의 문을 완전히 닫은 채,"], "cores": ["또래들이 먼저 말을 건네도 무시하거나 자리를 피하며 접촉을 차단하는", "공동 활동에서도 일절 입을 열지 않고 외부와의 소통을 단절하려는", "타인의 접근을 경계하고 배타적인 태도로 일관하며 고립을 자처하는", "대인 상호작용이 필요한 모든 상황을 회피하며 전혀 관계를 맺지 못하는"], "closers": ["경향이 관찰되고 있음.", "모습이 지속되고 있음.", "특성이 뚜렷하게 확인됨.", "양상이 나타나고 있음."]}]}, {"id": "peer_change", "title": "입소 초기 대비 태도 변화", "hint": "입소 초반과 비교한 현재의 변화 또는 문제 지속 여부", "options": [{"id": "p3_1", "label": "초기 강한 자기과시 → 최근 상대 이해·수용 (예시 기본)", "original": "입소 초기에는 자신을 강하게 드러내려는 모습이 종종 나타났으나, 최근에는 상대방을 이해하고 받아들이려는 모습이 늘어나고 있음.", "openers": ["입소 초기에는 자신을 강하게 드러내려는 모습이 종종 나타났으나,", "입소 초반에는 자기주장을 앞세우거나 스스로를 과시하려는 태도가 보였으나,", "위탁 초기에는 자신의 존재감을 강하게 표출하려는 경향이 있었으나,", "초기 적응 시기에는 자신의 방식을 고집하며 강하게 표현하는 경우가 있었으나,", "입소 직후에는 방어적으로 자신을 크게 드러내려는 모습이 관찰되었으나,"], "cores": ["최근에는 상대방을 이해하고 받아들이려는", "점차 또래 아동의 입장을 헤아리고 수용하려는", "시간이 흐르면서 타인의 의견에 귀를 기울이고 양보하려는", "최근 들어 상대의 다름을 인정하고 한 걸음 물러서서 배려하려는", "생활에 안정을 찾으면서 주변 또래를 이해하고 존중하려는"], "closers": ["모습이 늘어나고 있음.", "태도가 눈에 띄게 증가하고 있음.", "변화가 뚜렷하게 관찰되고 있음.", "긍정적인 방향으로 변화하고 있음.", "모습이 자주 확인되고 있음."]}, {"id": "p3_2", "label": "초기 경계심·방어적 → 최근 라포 형성 및 개방적 소통", "original": "입소 초기에는 낯선 환경과 타인에 대한 경계심으로 다소 닫힌 태도를 보였으나, 최근에는 교사 및 또래와 라포가 형성되며 편안하게 소통하고 있음.", "openers": ["입소 초기에는 낯선 환경과 타인에 대한 경계심으로 다소 닫힌 태도를 보였으나,", "초반에는 주변을 경계하며 말을 아끼고 방어적인 자세를 취했으나,", "위탁 초기에는 긴장감이 높아 또래 및 교사와 거리를 두는 모습이었으나,", "입소 직후에는 낯가림과 경계심으로 인해 수동적인 태도가 두드러졌으나,"], "cores": ["최근에는 교사 및 또래와 라포가 형성되며 편안하게 소통하는", "시설 생활에 적응하면서 먼저 미소를 보이고 대화를 건네는", "방어적인 긴장감이 완화되면서 공동체 활동에 자연스럽게 녹아드는", "점차 심리적 안정감을 찾으며 주변 아동들에게 마음을 열고 교류하는"], "closers": ["모습이 늘어나고 있음.", "빈도가 뚜렷하게 증가하고 있음.", "긍정적인 변화를 보이고 있음.", "양상이 확인되고 있음."]}, {"id": "p3_3", "label": "초기 거친 언행·마찰 → 최근 감정 조절·언어적 해결", "original": "입소 초기에는 불편한 상황에서 거친 말투나 즉각적인 감정 반응이 종종 나타났으나, 최근에는 스스로 감정을 가라앉히고 대화로 풀어가려는 노력이 늘어나고 있음.", "openers": ["입소 초기에는 불편한 상황에서 거친 말투나 즉각적인 감정 반응이 종종 나타났으나,", "입소 초반에는 사소한 갈등에도 비속어나 충동적인 언행이 앞서곤 했으나,", "위탁 초기에는 감정이 상할 때 직설적이고 거친 방식으로 표현하는 경우가 있었으나,", "초기에는 또래와의 신경전에서 감정을 조절하지 못하는 모습이 간혹 보였으나,"], "cores": ["최근에는 스스로 감정을 가라앉히고 대화로 풀어가려는 노력이", "지속적인 지도를 통해 거친 표현을 줄이고 차분하게 의사를 전달하려는 시도가", "감정이 격해지는 순간에도 한 번 더 생각하고 예의를 갖추어 소통하려는 모습이", "최근 들어 충동적인 대응을 자제하고 원만하게 타협하려는 태도가"], "closers": ["늘어나고 있음.", "눈에 띄게 증가하고 있음.", "점차 자리 잡고 있음.", "확인되고 있음."]}, {"id": "p3_4", "label": "초기부터 현재까지 기복 없이 안정적 관계 유지", "original": "입소 초기부터 현재까지 큰 감정 기복이나 대인관계 마찰 없이 또래 아동들과 안정적이고 우호적인 관계를 꾸준히 이어 가고 있음.", "openers": ["입소 초기부터 현재까지 큰 감정 기복이나 대인관계 마찰 없이", "위탁 초기 적응 과정부터 지금까지 일관되게", "환경 변화에도 흔들림 없이 입소 초반부터 현재에 이르기까지", "처음 입소했을 때부터 현재까지 줄곧 원만한 태도로"], "cores": ["또래 아동들과 안정적이고 우호적인 관계를 꾸준히", "생활실 내 또래들과 신뢰를 바탕으로 평온한 교우 관계를", "주변 아동들과 갈등 없이 화목하고 모범적인 관계를", "공동체 구성원으로서 안정감 있고 친화적인 대인관계를"], "closers": ["이어 가고 있음.", "유지하고 있음.", "형성하고 있음.", "보여주고 있음."]}, {"id": "p3_5", "label": "⚠️ 초기부터 현재까지 폭력성·강압적 태도 변함없이 유지", "original": "입소 초기부터 현재까지 폭력성과 강압적인 태도가 전혀 개선되지 않고 변함없이 유지되고 있으며, 교사의 지속적인 지도에도 위압적인 언행이 반복되고 있음.", "openers": ["입소 초기부터 현재까지 폭력성과 강압적인 태도가 변함없이 유지되고 있으며,", "위탁 초기부터 보였던 공격적이고 고압적인 성향이 현재까지도 전혀 수그러들지 않고 있으며,", "초기부터 지금까지 또래를 힘으로 누르려는 폭력적이고 강압적인 행동 양식이 그대로 지속되고 있으며,", "입소 초반의 거칠고 강압적인 태도가 시간이 경과한 현재까지도 뚜렷한 변화 없이 이어지고 있으며,"], "cores": ["담당 교사의 반복적인 훈육과 분리 지도에도 불구하고 위압적인 언행이", "자신의 잘못된 관계 방식을 수정하려는 의지 없이 공격적인 태도가", "주변 아동들을 향한 위협적인 태도와 강압적인 요구가", "감정 조절 실패와 폭력적인 대처 방식이 개선되지 않은 채"], "closers": ["반복되고 있음.", "계속해서 관찰되고 있음.", "그대로 나타나고 있음.", "지속적으로 확인되고 있음."]}, {"id": "p3_6", "label": "⚠️ 초기부터 현재까지 대인관계를 전혀 하지 못하고 단절 지속", "original": "입소 초기부터 현재에 이르기까지 또래들과 대인관계를 전혀 맺지 못하고 있으며, 생활 기간이 경과했음에도 관계 단절과 고립 상태가 변함없이 지속되고 있음.", "openers": ["입소 초기부터 현재에 이르기까지 또래들과 대인관계를 전혀 맺지 못하고 있으며,", "위탁 초기부터 나타난 대인 기피와 관계 단절 양상이 현재까지도 변함없이 이어지고 있으며,", "처음 입소했을 때부터 지금까지 주변 누구와도 유대를 형성하지 못한 상태가 유지되고 있으며,", "초기부터 현재까지 타인에게 마음을 열지 못하고 대인관계를 전혀 하지 못하는 모습이 계속되고 있으며,"], "cores": ["생활 기간이 상당히 경과했음에도 또래 집단 내 고립 상태가", "교사의 지속적인 관계 중재 시도에도 불구하고 타인과의 접촉 거부 및 단절이", "공동체 생활에 전혀 융화되지 못한 채 혼자 겉도는 양상이", "또래 아동들과의 상호작용이 전무한 극단적인 고립 모습이"], "closers": ["변함없이 지속되고 있음.", "그대로 유지되고 있음.", "계속 관찰되고 있음.", "개선되지 않고 있음."]}, {"id": "p3_7", "label": "⚠️ 초기에는 눈치를 보았으나 최근 오히려 강압성·마찰 증가", "original": "입소 초기에는 낯선 환경 탓에 눈치를 보며 조심하는 듯했으나, 시설 생활에 익숙해지면서 오히려 폭력성과 강압적인 태도가 두드러지게 나타나고 있음.", "openers": ["입소 초기에는 낯선 환경 탓에 눈치를 보며 조심하는 듯했으나,", "위탁 초반에는 긴장감으로 인해 공격적인 성향을 일시적으로 감추는 모습이었으나,", "초기 적응 기간에는 비교적 조용히 지내며 드러나지 않았으나,", "입소 직후에는 주변 분위기를 살피며 소극적으로 행동했으나,"], "cores": ["시설 환경과 또래 파악이 끝나자 오히려 폭력성과 강압적인 태도가", "생활에 익숙해지면서 최근 들어 또래 아동을 압박하고 갈등을 일으키는 빈도가", "시간이 지날수록 본래의 거칠고 강압적인 대인관계 습성이", "최근에는 교사의 시선이 닿지 않는 곳에서 또래를 강압적으로 대하는 모습이"], "closers": ["두드러지게 나타나고 있음.", "오히려 늘어나고 있음.", "빈번하게 관찰되고 있음.", "확인되고 있어 주의 깊은 관리가 요구됨."]}]}, {"id": "peer_conclusion", "title": "관계 영역 종합 평가 및 지도 방향", "hint": "또래·공동체 문단의 마무리 평가 및 향후 개입 방향 (8종 선택지)", "options": [{"id": "p4_1", "label": "태도가 유연해지고 관계 유지 방식에 긍정적 변화 확인 (예시 기본)", "original": "또래를 대하는 태도가 이전보다 유연해지고 있으며, 관계를 유지하는 방식에서도 긍정적인 변화가 확인되고 있음.", "openers": ["또래를 대하는 태도가 이전보다 유연해지고 있으며,", "전반적으로 또래 아동을 대하는 자세가 한결 부드러워졌으며,", "타인과 상호작용하는 태도가 초기보다 훨씬 여유로워지고 있으며,", "교우 관계에서 보였던 경직된 모습이 점차 완화되고 있으며,", "주변 아동들과 어울리는 태도가 한층 성숙해지고 있으며,"], "cores": ["관계를 유지하는 방식에서도 긍정적인 변화가", "공동체 내에서 유대를 이어 가는 모습에서도 의미 있는 성장이", "갈등을 피하고 조화를 이루는 방식에서도 바람직한 변화가", "대인관계를 조율하고 지속하는 태도에서도 안정적인 발전이", "또래 아동들과 건강한 관계를 맺어 가는 과정에서도 긍정적인 호전이"], "closers": ["확인되고 있음.", "관찰되고 있음.", "나타나고 있음.", "이어지고 있음."]}, {"id": "p4_2", "label": "부정적 또래 동조 예방 및 주체적 의사표현 지도 필요", "original": "교우 관계는 원만하나, 퇴소 후에도 부정적인 또래 분위기에 휩쓸리지 않고 자신의 주관을 건강하게 지키는 연습이 지속적으로 필요함.", "openers": ["현재 공동체 내 교우 관계는 원만하나,", "또래들과 어울리는 사회성은 양호한 편이나,", "또래 아동들과 친밀하게 지내는 강점이 있으나,", "대인관계의 적응력은 대체로 안정적이나,"], "cores": ["부정적인 또래 분위기에 휩쓸리지 않고 자신의 주관을 건강하게 지키는 연습이", "친밀한 관계 속에서도 부적절한 요구를 단호히 거절하고 스스로 판단하는 훈련이", "주변의 유혹이나 분위기에 동조하지 않고 주체적으로 의사를 표현하는 태도 보완이", "건전한 교우 관계를 스스로 선별하고 건강한 경계를 설정하는 지도가"], "closers": ["지속적으로 필요함.", "요구됨.", "병행될 필요가 있음.", "필요한 것으로 보임."]}, {"id": "p4_3", "label": "감정 조율 및 깊이 있는 신뢰 형성 지원 필요", "original": "표면적인 원만함을 넘어 타인과 건강한 신뢰를 쌓고, 갈등 상황에서 감정을 성숙하게 조율하는 사회적 기술 보완이 필요함.", "openers": ["표면적인 원만함을 넘어 타인과 건강한 신뢰를 쌓고,", "방어적인 거리감을 조금씩 줄이며 정서적 공감대를 넓히고,", "일상적인 교류를 한 단계 발전시켜 깊이 있는 유대감을 형성하고,", "대인관계에서의 긴장감을 완화하여 안정적인 신뢰를 구축하고,"], "cores": ["갈등 상황에서 감정을 성숙하게 조율하는 사회적 기술에는", "자신의 생각과 감정을 상대방에게 부드럽게 전달하는 의사소통 방식에는", "마찰이 생겼을 때 방어적 태도 대신 대화로 타협점을 찾아가는 연습에는", "타인의 입장을 폭넓게 이해하고 수용하는 관계 기술에는"], "closers": ["보완이 필요함.", "지속적인 격려와 지도가 필요함.", "세심한 지원이 요구됨.", "꾸준한 연습이 필요함."]}, {"id": "p4_4", "label": "⚠️ 폭력성·강압적 행동 엄정 제한 및 공격성 교정 시급", "original": "타 아동들의 안전 보호와 공동체 질서 유지를 위해 폭력적이고 강압적인 행동에 대한 단호한 제한 조치와 더불어 공격성 조절을 위한 집중적인 교정 지도가 시급함.", "openers": ["타 아동들의 안전 보호와 공동체 질서 유지를 위해,", "반복되는 폭력성과 강압적인 태도가 주변 또래에게 미치는 부정적 영향을 차단하기 위해,", "힘으로 타인을 통제하려는 왜곡된 대인관계 방식을 근본적으로 개선하기 위해,", "공동체 내 추가적인 피해와 갈등 확산을 예방하기 위해,"], "cores": ["강압적인 언행에 대한 즉각적이고 단호한 제한 조치와 함께 분노·공격성 조절을 위한 집중 교정 지도가", "엄격한 생활 공간 분리 및 행동 통제와 더불어 폭력성 완화를 위한 전문적인 심리·행동 치료가", "규칙 위반에 대한 명확한 책임 부여와 공격적 충동을 다스리는 집중 상담 개입이", "강압적 행동을 즉시 제지하는 밀착 감독과 타인 존중 의식을 심어주는 강도 높은 교정 교육이"], "closers": ["시급함.", "절실히 요구됨.", "지속적이고 강력하게 병행되어야 함.", "필수적으로 필요함."]}, {"id": "p4_5", "label": "⚠️ 심각한 관계 단절 해소를 위한 기초 사회성 훈련·심리 개입 필요", "original": "대인관계 형성 자체가 전혀 이루어지지 않고 있어, 무리한 집단 합류보다는 개별 심리 상담과 기초적인 사회적 의사소통 훈련을 통한 단계적 개입이 필요함.", "openers": ["현재 대인관계 형성 자체가 전혀 이루어지지 않고 있어,", "만성적인 관계 단절과 고립 상태가 장기화되고 있는 만큼,", "타인에 대한 극심한 회피와 소통 부재가 지속되고 있으므로,", "집단 내 고립감을 해소하고 최소한의 사회적 적응력을 기르기 위해,"], "cores": ["무리한 집단 합류보다는 실무자와의 1:1 라포 형성 및 기초적인 의사소통 훈련을 통한 단계적 지원이", "심리적 거부감의 원인을 파악하는 개별 상담과 소규모 활동부터 시작하는 사회성 향상 프로그램이", "대인 불안과 방어기제를 낮추기 위한 전문적인 심리 치료 및 점진적인 관계 맺기 연습이", "타인과 안전하게 접촉하고 짧은 대화를 주고받는 기초 대인관계 기술 지도가"], "closers": ["필요함.", "우선적으로 요구됨.", "병행될 필요가 있음.", "시급히 요청됨."]}, {"id": "p4_6", "label": "⚠️ 타인 권리 존중 및 공감 능력 향상 교육 병행 필요", "original": "타인을 자신의 뜻대로 통제하려는 태도를 개선하기 위해, 상대방의 감정과 권리를 존중하는 인성 교육과 공감 능력 향상 훈련이 꾸준히 병행될 필요가 있음.", "openers": ["타인을 자신의 뜻대로 통제하거나 수단화하려는 태도를 개선하기 위해,", "자기중심적인 관계 맺기 방식에서 벗어나 건강한 상호작용을 익히기 위해,", "자신의 언행이 상대방에게 주는 상처와 위압감을 정확히 인식하도록 돕기 위해,", "일방적인 관계 패턴을 교정하고 상호 호혜적인 태도를 기르기 위해,"], "cores": ["상대방의 감정과 인권을 존중하는 인성 교육 및 공감 능력 향상 훈련이", "역지사지의 태도를 기르는 대인관계 코칭과 비폭력 대화법 연습이", "타인의 경계와 거절 의사를 존중하는 사회적 규범 교육이", "또래 아동을 동등한 인격체로 대하는 태도 교정과 지속적인 피드백 지도가"], "closers": ["꾸준히 병행될 필요가 있음.", "지속적으로 필요함.", "요구됨.", "강화되어야 함."]}, {"id": "p4_7", "label": "집단 내 서열 의식 해체 및 비폭력 갈등 해결 습득 필요", "original": "힘을 앞세운 서열 의식에서 벗어나 또래 아동들과 수평적으로 소통하고, 의견 차이를 비폭력적인 대화로 해결하는 태도를 익히도록 일관된 지도가 필요함.", "openers": ["힘이나 기세를 앞세운 서열 의식에서 벗어나 또래 아동들과 수평적으로 소통하고,", "과거 비행 집단에서 몸에 밴 위계적 관계 습성을 버리고,", "갈등 상황에서 자존심이나 힘을 내세우려는 태도를 줄이고,", "공동체 내에서 건전하고 평등한 또래 문화를 체득할 수 있도록,"], "cores": ["의견 차이를 비폭력적이고 합리적인 대화로 해결하는 태도를 익히도록 일관된 생활 지도가", "양보와 타협을 통해 문제를 풀어가는 성숙한 갈등 해결 훈련이", "상대를 제압하려는 태도 대신 협력과 조율을 경험하는 공동체 교육이", "감정적 충돌 없이 자신의 입장을 차분히 설명하는 의사소통 지도가"], "closers": ["필요함.", "지속적으로 요구됨.", "병행되어야 함.", "필요한 것으로 확인됨."]}, {"id": "p4_8", "label": "원만한 관계 역량을 유지하며 건전한 협력 경험 확장 기대", "original": "공동체 내에서 보여주는 안정적인 대인관계 역량을 바탕으로, 건전한 협력과 배려의 경험을 넓혀 간다면 퇴소 후에도 원만한 사회적 적응이 기대됨.", "openers": ["공동체 내에서 보여주는 안정적인 대인관계 역량을 바탕으로,", "현재 형성된 긍정적인 교우 관계 태도와 유연한 소통 방식을 유지하며,", "타인을 수용하고 조화를 이루는 사회성이 양호하게 자리 잡고 있어,", "생활관 내에서 발휘하고 있는 원만한 친화력과 배려심을 토대로,"], "cores": ["건전한 협력과 상호 지지의 경험을 넓혀 간다면 퇴소 후에도 원만한 사회적 적응이", "앞으로도 다양한 대인관계 상황에서 성숙하고 안정적인 관계를 이어 갈 것으로", "공동체 활동 속에서 긍정적인 또래 모델로서 좋은 영향을 미칠 것으로", "사회 복귀 이후에도 건강한 대인관계를 형성하고 유지할 수 있을 것으로"], "closers": ["기대됨.", "확인되고 있음.", "보임.", "전망됨."]}]}]}, {"id": "class", "name": "2. 수업·직업훈련·자격증", "shortName": "수업·직업훈련", "enabled": true, "steps": [{"id": "class_overall", "title": "전반적인 수업·직업훈련 참여 태도", "hint": "자격증 과정, 직업훈련, 교육 프로그램에서의 기본 참여 자세 (성실/불성실 등)", "options": [{"id": "c1_1", "label": "태도 양호·높은 이해도·교사 안내 순응 (예시 기본)", "original": "수업 태도는 전반적으로 양호하며, 대부분의 수업에서 높은 이해도를 보이고 교사의 안내에 따라 학습활동에 참여하고 있음.", "openers": ["수업 태도는 전반적으로 양호하며,", "교육 및 직업훈련에 임하는 기본 자세는 대체로 안정적이며,", "전반적인 수업 참여 태도가 성실한 편이며,", "프로그램 및 수업 시간의 기본 규율을 잘 준수하며,", "평소 교육 활동에 참여하는 태도는 전반적으로 무난하며,"], "cores": ["대부분의 수업에서 높은 이해도를 보이고 교사의 안내에 따라 학습활동에", "강사와 교사의 설명을 빠르게 파악하고 안내된 절차에 맞추어 교육 과정에", "과제에 대한 이해력이 양호하여 지도 교사의 안내에 순응하며 제반 훈련에", "전달되는 교육 내용을 무리 없이 소화하며 교사의 지시에 따라 성실하게 수업에", "대다수 교육 시간마다 안정적인 이해도를 바탕으로 안내된 활동에"], "closers": ["참여하고 있음.", "임하고 있음.", "동참하는 모습이 관찰되고 있음.", "참여하는 모습이 확인되고 있음."]}, {"id": "c1_2", "label": "자격증·직업훈련 실습에 높은 흥미와 집중", "original": "직업훈련 및 자격증 취득 과정에 높은 흥미를 보이며, 실습 시간마다 진지한 눈빛으로 시범을 살피고 적극적으로 참여하는 모습이 관찰되고 있음.", "openers": ["직업훈련 및 자격증 취득 과정에 높은 흥미를 보이며,", "실제 기술을 익히고 자격을 취득하는 직업교육 시간에 많은 관심을 나타내며,", "진로와 연계된 자격증 실습 과정에 긍정적인 동기를 가지고 있으며,", "기능 습득 중심의 직업훈련 프로그램에서 뚜렷한 참여 의욕을 보이며,"], "cores": ["실습 시간마다 진지한 태도로 시범을 살피고 과제에 적극적으로 참여하는", "강사의 설명과 작업 시연을 주의 깊게 관찰하며 실습 과정을 성실히 따라가는", "주어진 실습 과제를 스스로 완성해 보려고 집중력을 발휘하며 매진하는", "작업 도구 사용법과 실습 절차를 빠르게 익히며 능동적으로 훈련에 임하는"], "closers": ["모습이 관찰되고 있음.", "모습이 확인되고 있음.", "태도를 보이고 있음.", "자세가 돋보이고 있음."]}, {"id": "c1_3", "label": "선호 실습과 비선호 수업 간 집중도 편차 있음", "original": "교육 참여는 전반적으로 이루어지고 있으나, 본인이 흥미를 느끼는 직업실습 과목과 그렇지 않은 수업 간의 집중도 편차가 다소 관찰되고 있음.", "openers": ["교육 및 훈련 참여는 전반적으로 이루어지고 있으나,", "일과 중 배정된 수업 시간에는 빠짐없이 출석하고 있으나,", "교사의 안내에 따라 기본적인 교육 과정에는 동참하고 있으나,", "전반적인 수업 태도는 큰 무리가 없으나,"], "cores": ["본인이 흥미를 느끼는 직업실습 과목과 그렇지 않은 수업 간의 집중도 편차가 다소", "선호하는 체험·실기 과목과 정적인 이론 수업 사이에서 참여 의욕의 차이가", "관심 있는 자격 과정에서는 몰입하나 흥미가 낮은 활동에서는 주의가 분산되는 모습이", "과목의 특성과 개인적 선호도에 따라 수업 몰입도와 참여 태도의 기복이"], "closers": ["관찰되고 있음.", "확인되고 있음.", "나타나는 편임.", "보이고 있음."]}, {"id": "c1_4", "label": "기초 학습 부담은 있으나 개별 안내 시 성실 참여", "original": "이전의 학업 공백으로 인해 수업 초반에는 다소 부담감을 나타내나, 교사의 단계별 안내가 주어지면 차분하게 과제를 수행하고 있음.", "openers": ["이전의 학업 공백으로 인해 수업 초반에는 다소 부담감을 나타내나,", "기초 학습에 대한 자신감 부족으로 새로운 과제 앞에서 처음에는 주저하기도 하나,", "낯선 이론이나 학습 과제가 주어질 때 다소 위축된 모습을 보이기도 하나,", "과제 난이도에 따라 초반에는 막막함을 표현하는 경우가 있으나,"], "cores": ["교사의 단계별 안내와 개별 설명이 주어지면 차분하게 과제를 수행하는", "실무자의 격려와 눈높이에 맞춘 지도가 동반될 때 포기하지 않고 따라오는", "옆에서 세부 과정을 짚어주면 안정을 찾고 성실하게 활동에 임하는", "교사의 지도에 순응하며 자신의 속도에 맞추어 교육 시간을 채워 나가는"], "closers": ["모습을 보이고 있음.", "모습이 관찰되고 있음.", "태도가 확인되고 있음.", "모습이 나타남."]}, {"id": "c1_5", "label": "⚠️ 수업 태도가 전반적으로 불성실하고 참여 의욕이 낮음", "original": "수업 태도는 전반적으로 불성실하며, 교육 및 직업훈련 과정에 대한 참여 의욕이 낮아 책상에 엎드려 있거나 딴청을 피우는 모습이 자주 관찰되고 있음.", "openers": ["수업 태도는 전반적으로 불성실하며,", "교육 및 직업훈련 시간에 임하는 기본 자세가 매우 산만하고 불성실하며,", "전반적인 수업 참여 의욕이 현저히 낮아,", "학습 및 기술 훈련의 필요성을 느끼지 못하고 불성실한 태도로 일관하며,"], "cores": ["수업 시간 중 책상에 엎드려 자거나 딴청을 피우며 과제를 소홀히 하는", "교사의 설명을 귀담아듣지 않고 자세를 흐트러뜨린 채 시간을 흘려보내는", "주어진 실습이나 교육 활동에 성의를 보이지 않고 대충 자리만 채우는", "주의 집중 시간이 매우 짧아 수업 내내 지루해하며 불성실하게 임하는"], "closers": ["모습이 자주 관찰되고 있음.", "모습이 반복적으로 확인되고 있음.", "경향이 뚜렷하게 나타나고 있음.", "태도가 지속되고 있음."]}, {"id": "c1_6", "label": "⚠️ 무기력·수동적 태도로 일관하며 독려 시에만 마지못해 참여", "original": "교육 시간 내내 무기력하고 무관심한 태도를 보이며, 교사의 거듭된 독려가 있을 때만 마지못해 최소한의 과제에 참여하는 모습이 관찰되고 있음.", "openers": ["교육 시간 내내 무기력하고 무관심한 태도를 보이며,", "수업 및 직업훈련 전반에 걸쳐 자발적인 참여 동기가 거의 없으며,", "매 수업마다 피로감과 귀찮음을 자주 호소하며,", "과제 수행에 있어 극도로 수동적이고 소극적인 자세를 취하며,"], "cores": ["교사의 거듭된 독려와 지적이 있을 때만 마지못해 최소한의 활동에 참여하는", "스스로 도구나 교재를 챙기지 않고 옆에서 일일이 채근해야만 조금씩 움직이는", "실습 과정에 의욕 없이 가만히 앉아 있다가 교사가 개입해야 겨우 따라 하는", "형식적으로만 출석할 뿐 실제 훈련 과정에는 마음을 두지 못하는"], "closers": ["모습이 관찰되고 있음.", "경향이 확인되고 있음.", "모습을 보이고 있음.", "양상이 이어지고 있음."]}, {"id": "c1_7", "label": "⚠️ 수업 거부·자리 이탈 등 기본적인 수업 규율 미준수", "original": "수업 참여를 노골적으로 거부하거나 교육 도중 임의로 자리를 이탈하려 하는 등 기본적인 수업 규율을 따르지 않는 태도가 관찰되고 있음.", "openers": ["수업 및 직업훈련 참여를 노골적으로 거부하거나,", "교육 시간 준수와 착석 등 가장 기본적인 수업 규율조차 지키지 않으며,", "본인의 기분에 따라 아예 수업에 참여하지 않으려고 버티거나,", "직업훈련 시간 중 정해진 작업 위치와 규칙을 무시하며,"], "cores": ["교육 도중 임의로 자리를 이탈하려 하는 등 불성실하고 규율에 어긋난", "화장실이나 휴식을 핑계로 수업 장소를 자주 벗어나려는", "교사의 착석 및 과제 수행 지시를 무시하고 제멋대로 행동하는", "훈련 참여 자체를 기피하며 교육 진행에 차질을 빚는"], "closers": ["태도가 관찰되고 있음.", "모습이 빈번하게 확인되고 있음.", "문제가 반복되고 있음.", "모습이 나타나고 있음."]}]}, {"id": "class_preference", "title": "선호 수업 유형 및 실습·과제 수행 경향", "hint": "신체활동·기술실습 선호도 및 이론·복잡한 과제 직면 시 태도", "options": [{"id": "c2_1", "label": "신체활동 선호 + 깊은 사고 활동은 간단히 참여 (예시 기본)", "original": "신체활동 중심의 수업을 선호하며, 충분한 사고가 필요한 활동에서는 비교적 간단하고 부담이 적은 방식으로 참여하려는 경향이 관찰되고 있음.", "openers": ["신체활동 중심의 수업을 선호하며,", "몸을 직접 움직이는 체육·체험 중심의 활동에 높은 선호도를 보이며,", "역동적이고 활동적인 프로그램에는 활기차게 참여하는 반면,", "정적인 수업보다는 신체적 움직임이 수반되는 교육을 선호하며,", "활동량이 많은 체험형 수업에서 가장 밝고 적극적인 모습을 보이나,"], "cores": ["충분한 사고가 필요한 활동에서는 비교적 간단하고 부담이 적은 방식으로 참여하려는", "깊이 생각하거나 긴 호흡의 집중이 요구되는 과제에서는 간략하게 마무리하려는", "복잡한 문제 해결이나 논리적 사고가 필요한 과정에서는 손쉬운 방법만 택하려는", "오래 고민하고 생각을 정리해야 하는 활동에서는 부담을 느끼고 단순하게 처리하려는", "심층적인 사고 과정이 따르는 학습에서는 노력을 최소화하여 가볍게 넘어가려는"], "closers": ["경향이 관찰되고 있음.", "모습이 확인되고 있음.", "경향이 나타나고 있음.", "모습이 종종 관찰됨.", "특성을 보이고 있음."]}, {"id": "c2_2", "label": "실습형 직업훈련(바리스타·제과·기술 등) 선호 + 이론·필기는 부담", "original": "손으로 직접 만들고 결과물을 확인하는 실습형 직업훈련을 선호하며, 자격증 필기 대비나 이론 정리처럼 긴 사고가 필요한 과정에서는 비교적 간단히 넘어가려는 경향이 관찰되고 있음.", "openers": ["손으로 직접 만들고 결과물을 확인하는 실습형 직업훈련을 선호하며,", "바리스타·제과제빵·기술 공예 등 직접 도구를 다루는 실기 훈련에 높은 흥미를 보이나,", "눈에 보이는 결과물이 바로 나타나는 체험·실습 위주의 교육은 즐거워하는 반면,", "몸으로 익히는 실기 중심의 자격증 과정에는 적극적으로 참여하나,"], "cores": ["자격증 필기 대비나 이론 정리처럼 긴 사고가 필요한 과정에서는 비교적 간단히 넘어가려는", "암기나 이론적 원리 이해가 요구되는 필기 수업에서는 쉽게 피로감을 느끼고 부담스러워하는", "책상에 앉아 문제를 풀거나 개념을 정리해야 하는 활동에서는 집중 시간이 짧아지는", "충분한 사고와 이론 학습이 뒷받침되어야 하는 과정에서는 소극적인 방식으로만 참여하려는"], "closers": ["경향이 관찰되고 있음.", "모습이 확인되고 있음.", "경향이 나타나고 있음.", "편임."]}, {"id": "c2_3", "label": "기본 기능 습득은 빠르나 반복 숙련·정밀 작업 시 조급함", "original": "컴퓨터 활용이나 기초 작업 기능을 익히는 속도는 빠른 편이나, 완성도를 높이기 위한 반복 연습 과정에서는 다소 조급해하며 빠르게 끝내려는 경향이 관찰되고 있음.", "openers": ["컴퓨터 활용이나 기초 작업 기능을 익히는 속도는 빠른 편이나,", "직관적인 눈썰미와 손감각이 좋아 기본 실습 동작은 빠르게 습득하나,", "새로운 장비 조작이나 기초 실기 과제를 따라 하는 속도는 우수하나,", "초반의 기능 이해도와 작업 속도는 또래 대비 양호한 편이지만,"], "cores": ["완성도를 높이기 위한 반복 연습 과정에서는 다소 조급해하며 빠르게 끝내려는", "세밀한 교정이나 긴 인내심이 필요한 숙련 단계에서는 지루해하며 대략적으로 마무리하려는", "차분하게 오류를 점검하고 정밀도를 높여야 하는 과제에서는 끈기가 다소 부족한", "단순 반복 훈련이 이어질 때 집중력이 흐려지고 서둘러 과제를 마치려는"], "closers": ["경향이 관찰되고 있음.", "모습이 확인되고 있음.", "아쉬움이 나타나고 있음.", "경향을 보이고 있음."]}, {"id": "c2_4", "label": "과제 중 실수·어려움 발생 시 쉽게 포기하려는 경향", "original": "실습이나 과제 수행 중 자신이 생각한 대로 결과물이 나오지 않거나 실수가 생기면, 스스로 수정하기보다 쉽게 의욕을 잃고 포기하려는 경향이 간혹 관찰됨.", "openers": ["실습이나 과제 수행 중 자신이 생각한 대로 결과물이 나오지 않거나 실수가 생기면,", "과제가 순조롭게 풀릴 때는 열의를 보이다가도 중간에 막히는 구간이 발생하면,", "실패나 실수에 대한 민감도가 다소 높아 작업 중 작은 오류가 나타났을 때,", "난도가 다소 높은 실습 과제나 생소한 문제 상황에 직면하게 되면,"], "cores": ["스스로 원인을 찾아 수정하기보다 쉽게 의욕을 잃고 포기하려는", "끈기 있게 재시도하기보다 답답함을 표하며 교사에게 바로 의존하려는", "도전을 이어 가기보다 부담이 적은 선에서 활동을 멈추거나 회피하려는", "자신감을 잃고 소극적인 태도로 돌아서며 과제를 미루려는"], "closers": ["경향이 간혹 관찰됨.", "모습이 종종 확인되고 있음.", "경향이 나타나고 있음.", "모습을 보이기도 함."]}, {"id": "c2_5", "label": "자격증 취득 목표를 가지고 반복 실습에도 성실히 매진", "original": "자격증 취득이라는 분명한 목표 의식을 바탕으로, 반복되는 실기 연습과 이론 문제 풀이 과정에도 흐트러짐 없이 성실하게 임하는 모습이 관찰되고 있음.", "openers": ["자격증 취득이라는 분명한 목표 의식을 바탕으로,", "퇴소 후 진로 준비와 자격 취득에 대한 의지가 뚜렷하여,", "스스로 세운 자격증 취득 목표에 높은 동기를 느끼며,", "직업훈련 과정을 자신의 성장 기회로 긍정적으로 인식하여,"], "cores": ["반복되는 실기 연습과 이론 문제 풀이 과정에도 흐트러짐 없이 성실하게 임하는", "다소 까다로운 실습 과제가 주어져도 교사에게 질문하며 끝까지 완수해 내는", "작업 준비부터 마무리 정돈까지 책임감 있고 끈기 있는 자세로 훈련에 매진하는", "어려운 구간에서도 포기하지 않고 꾸준히 연습을 이어 가며 숙련도를 높이는"], "closers": ["모습이 관찰되고 있음.", "모습이 확인되고 있음.", "긍정적인 태도를 보이고 있음.", "모습이 돋보이고 있음."]}]}, {"id": "class_behavior", "title": "수업 중 행동 특성 (수업 방해·독자 몰입·교사 마찰 등)", "hint": "필요 시 선택하세요 (선택하지 않으면 기본 3문장 구조로 작성됩니다)", "options": [{"id": "cb_1", "label": "⚠️ 수업 중 잡담·장난·소란으로 다른 아동들을 방해함", "original": "수업 도중 불필요한 잡담이나 장난을 걸고 소란을 피워, 성실히 참여하려는 다른 아동들의 집중을 흐트러뜨리고 수업 분위기를 방해하는 모습이 자주 관찰되고 있음.", "openers": ["특히 수업 도중 주변 아동들에게 불필요한 잡담이나 장난을 걸며,", "또한 본인이 수업에 흥미를 잃으면 큰 소리로 떠들거나 소란을 피워,", "수업 시간 중 가만히 있지 못하고 주변 아동들의 작업에 끼어들거나 시비를 걸어,", "아울러 교육 진행 중에 부적절한 농담이나 산만한 행동을 반복하여,"], "cores": ["성실히 참여하려는 다른 아동들의 집중을 흐트러뜨리고 전체 수업 분위기를 방해하는", "주변 아동들의 학습과 실습 진행에 지장을 초래하며 교육 환경을 어수선하게 만드는", "함께 훈련받는 아동들의 주의를 분산시키고 수업 흐름을 자주 끊는", "타 아동들의 과제 수행을 방해하여 교사의 제지를 반복적으로 받는"], "closers": ["모습이 자주 관찰되고 있음.", "행동이 빈번하게 확인되고 있음.", "경향이 나타나고 있음.", "문제가 관찰됨."]}, {"id": "cb_2", "label": "🔍 혼자서만 과제에 집중하고 주변·협동 과정은 전혀 신경 쓰지 않음", "original": "자신이 맡은 작업에는 혼자서만 깊게 집중하나, 주변 상황이나 또래 아동들과 호흡을 맞춰야 하는 협동 과정은 전혀 신경 쓰지 않는 독자적인 경향이 관찰되고 있음.", "openers": ["한편 본인이 관심 있는 작업이나 개별 과제에는 혼자서만 깊게 집중하나,", "자신의 실습 결과물을 만드는 데에만 몰두한 나머지,", "개별 과제를 수행할 때는 높은 집중력을 보이지만,", "수업 중 자신의 작업 속도와 방식에만 철저히 매몰되어,"], "cores": ["주변 상황이나 또래 아동들과 호흡을 맞춰야 하는 협동 과정은 전혀 신경 쓰지 않는", "공용 도구를 독점하거나 조별 실습에서 타 아동과의 협력을 외면하는 독자적인", "전체 수업의 진행 속도나 주변 아동들의 상황은 아랑곳하지 않고 자기 할 일만 하는", "교사의 추가 안내나 주변의 협조 요청을 무시한 채 혼자만의 방식대로만 진행하려는"], "closers": ["경향이 관찰되고 있음.", "모습이 확인되고 있음.", "특성이 나타나고 있음.", "편임."]}, {"id": "cb_3", "label": "⚠️ 지적·안내에 반발하며 담당 교사·강사와 마찰이 잦음", "original": "교사나 직업훈련 강사의 정당한 지도와 안내에 불만을 드러내거나 신경질적으로 반발하며, 수업 중 담당 교사와 마찰을 빚는 모습이 빈번하게 나타나고 있음.", "openers": ["또한 수업 태도나 실습 방법에 대한 담당 교사의 정당한 지도와 안내에", "교육 중 교사나 직업훈련 강사가 보완할 점을 짚어주면", "자신의 불성실한 태도나 작업 오류에 대해 교사가 지적할 때마다", "아울러 수업 규칙 준수를 요구하는 담당 교사의 안내에"], "cores": ["불만을 노골적으로 드러내거나 신경질적으로 반발하며 잦은 마찰을 빚는", "방어적이고 공격적인 말투로 말대꾸를 하며 교사와 실랑이를 벌이는", "지도를 수용하지 않고 거친 태도로 대들거나 작업을 중단해 버리는 등 교사와 충돌하는", "억울함을 주장하며 지시에 불응하고 담당 교사와 대립각을 세우는"], "closers": ["모습이 빈번하게 나타나고 있음.", "양상이 자주 관찰되고 있음.", "문제가 확인되고 있음.", "경향이 지속되고 있음."]}, {"id": "cb_4", "label": "⚠️ 다른 아동의 실습·실수에 간섭하거나 조롱하며 갈등 유발", "original": "자신의 과제보다 다른 아동의 실습 과정에 불필요하게 간섭하거나 실수를 조롱하여, 수업 시간 중 또래 간 마찰을 유발하는 모습이 간혹 관찰되고 있음.", "openers": ["또한 자신의 과제에 집중하기보다 주변 아동들의 실습 과정을 기웃거리며,", "수업 중 다른 아동이 과제 수행에 어려움을 겪거나 실수를 하면,", "본인의 작업은 미루어 둔 채 타 아동의 결과물에 불필요하게 참견하며,"], "cores": ["지나치게 간섭하거나 비웃고 조롱하여 수업 중 또래 간 갈등을 유발하는", "무시하는 발언을 던져 상대 아동의 감정을 자극하고 실랑이를 일으키는", "훈수를 두거나 핀잔을 주어 수업 분위기를 험악하게 만드는"], "closers": ["모습이 간혹 관찰되고 있음.", "경향이 확인되고 있음.", "행동이 종종 나타나고 있음."]}, {"id": "cb_5", "label": "교사 피드백을 잘 수용하고 또래 아동과 협력하며 안정적 분위기 유지", "original": "담당 교사의 피드백을 열린 태도로 수용하며, 실습 과정에서도 주변 아동들과 도구를 나누어 쓰는 등 안정적인 수업 분위기를 유지하고 있음.", "openers": ["담당 교사와 강사의 조언 및 피드백을 열린 태도로 수용하며,", "수업 중 교사의 지도에 예의 바르게 응답하고,", "공동 실습 과정에서도 주변 아동들을 배려하며,"], "cores": ["공용 도구와 재료를 질서 있게 나누어 쓰는 등 안정적인 수업 분위기를 유지하는", "서툰 또래 아동의 작업을 돕거나 협력하며 긍정적인 교육 분위기를 만드는", "교사와 원활하게 소통하며 차분하고 정돈된 실습 태도를 이어 가는"], "closers": ["모습이 관찰되고 있음.", "모습이 확인되고 있음.", "긍정적인 태도를 보이고 있음."]}]}, {"id": "class_conclusion", "title": "학습·직업훈련 역량 평가 및 보완 방향", "hint": "수업·직업훈련 문단의 마무리 종합 소견 (8종 선택지)", "options": [{"id": "c3_1", "label": "이해 능력은 양호하나 스스로 사고·해결하는 태도 보완 필요 (예시 기본)", "original": "학습 내용을 이해하는 능력은 양호하나, 생각하는 과정에 충분히 참여하고 스스로 해결 방법을 찾아가는 태도에는 보완이 필요함.", "openers": ["학습 내용을 이해하는 능력은 양호하나,", "기본적인 과제 이해력과 습득 속도는 충분한 편이나,", "교사의 설명을 받아들이는 인지적 수용력은 우수하나,", "수업 내용을 파악하는 기초 역량은 잘 갖추고 있으나,", "전반적인 학습 및 실습 이해도는 무난한 수준이나,"], "cores": ["생각하는 과정에 충분히 참여하고 스스로 해결 방법을 찾아가는 태도에는", "어려운 과제 앞에서도 깊이 있게 사고하며 자기주도적으로 답을 모색하는 자세에는", "단순 참여를 넘어 스스로 고민하고 끝까지 문제를 해결해 내려는 끈기에는", "사고가 요구되는 과정에서 부담을 이겨내고 주체적으로 해결책을 찾아가는 연습에는", "문제 해결 과정에 참을성 있게 몰입하여 스스로의 힘으로 완수하는 태도에는"], "closers": ["보완이 필요함.", "지속적인 보완이 요구됨.", "단계적인 지도와 보완이 필요함.", "꾸준한 연습과 보완이 필요함."]}, {"id": "c3_2", "label": "실기 감각은 좋으나 자격 취득을 위한 이론·인내심 보완 필요", "original": "실습 감각과 손기술 습득 능력은 양호하나, 실질적인 자격증 취득과 직무 수행을 위해 기초 이론 학습과 반복 과정을 견뎌내는 인내심에는 보완이 필요함.", "openers": ["실습 감각과 손기술 습득 능력은 양호하나,", "실기 작업에 대한 감각과 초기 습득력은 우수한 편이나,", "직업훈련 실습에서 보여주는 기능적 잠재력은 충분하나,", "도구를 다루고 실습 과제를 따라 하는 능력은 무난하나,"], "cores": ["실질적인 자격증 취득과 직무 수행을 위해 요구되는 기초 이론 학습과 인내심에는", "조급함을 줄이고 반복 숙련 과정과 필기 준비를 끝까지 견뎌내는 지구력에는", "일시적인 흥미를 넘어 이론과 실기를 균형 있게 마무리하는 지속성에는", "작업 완성도를 세밀하게 점검하고 지루한 반복 과정을 이겨내는 태도에는"], "closers": ["보완이 필요함.", "지속적인 독려와 보완이 요구됨.", "세심한 지도가 필요함.", "꾸준한 보완이 필요함."]}, {"id": "c3_3", "label": "자격증 취득 등 성취 경험을 통한 진로 자신감 강화 필요", "original": "단계별 실습 완수와 자격증 취득 등 구체적인 성취 경험을 축적하여, 스스로 해낼 수 있다는 효능감과 건전한 진로 동기를 높여줄 필요가 있음.", "openers": ["잠재적인 작업 수행 능력과 이해력을 갖추고 있으므로,", "적절한 동기가 부여될 때 충분한 역량을 발휘하는 편이므로,", "실수에 대한 두려움을 줄이고 학습 동기를 꾸준히 유지하기 위해,", "기초적인 참여 태도와 발전 가능성이 확인되고 있으므로,"], "cores": ["단계별 실습 완수와 자격증 취득 등 구체적인 성취 경험을 통해 진로 자신감을 높여줄", "작은 성공 경험을 반복적으로 축적하여 스스로 해낼 수 있다는 자기효능감을 키워줄", "수준에 맞는 단계별 과제를 제시하고 과정 중심의 격려를 통해 자립 동기를 강화할", "자격 취득이라는 가시적인 목표 달성을 지원하여 건전한 진로 의식을 북돋아 줄"], "closers": ["필요가 있음.", "지원이 요구됨.", "지속적인 격려가 필요함.", "세심한 지도가 필요함."]}, {"id": "c3_4", "label": "훈련 태도가 우수하여 심화 자격 과정 및 진로 연계 기대", "original": "직업훈련 태도와 기술 습득력이 안정적으로 향상되고 있어, 향후 심화 자격증 취득 및 실질적인 취업·자립 과정으로 연계할 경우 긍정적인 성장이 기대됨.", "openers": ["직업훈련 태도와 기술 습득력이 안정적으로 향상되고 있어,", "교육 과정 전반에서 성실성과 분명한 목표 의식이 확인되고 있어,", "실습 참여 자세와 과제 완수 능력이 모범적으로 자리 잡고 있어,", "자격 취득을 향한 열의와 작업 수행 역량이 꾸준히 자라고 있어,"], "cores": ["향후 심화 자격증 취득 및 실질적인 취업·자립 과정으로 연계할 경우 긍정적인 성장이", "지속적인 진로 코칭과 상위 기술 훈련 기회를 제공할 경우 안정적인 자립 기반 형성이", "퇴소 후 건전한 직업 생활과 사회 정착을 위한 든든한 밑거름이 될 것으로", "앞으로도 관련 분야의 자격을 추가로 취득하며 진로 역량을 넓혀 갈 것으로"], "closers": ["기대됨.", "확인되고 있음.", "보임.", "전망됨."]}, {"id": "c3_5", "label": "⚠️ 기본 수업 규율 확립 및 타 아동 수업 방해 행동 교정 시급", "original": "기능 습득에 앞서 기본적인 수업 예절과 규율을 준수하고, 다른 아동들의 학습을 방해하는 산만한 행동을 통제할 수 있도록 일관되고 단호한 지도가 필요함.", "openers": ["본격적인 기술 습득이나 자격 준비에 앞서,", "공동 교육 환경의 질서를 유지하고 본인의 훈련 효과를 높이기 위해,", "수업 시간 중 반복되는 소란과 타 아동 방해 행동을 개선하기 위해,", "기본적인 착석 유지와 수업 참여 태도가 형성되어 있지 않으므로,"], "cores": ["수업 예절과 기본 규율을 명확히 인식시키고 타인의 학습권을 침해하는 행동을 제지하는 단호한 지도가", "산만한 행동을 스스로 통제하고 정해진 시간 동안 자리를 지키는 기초 학습 태도 확립이", "다른 아동들에게 피해를 주지 않고 공동 교육 규칙을 따르도록 일관된 행동 수정 지도가", "수업 방해 시 즉각적인 분리 지도와 함께 기본적인 교육 참여 태도를 바로잡는 노력이"], "closers": ["시급함.", "필요함.", "우선적으로 요구됨.", "지속적으로 병행되어야 함."]}, {"id": "c3_6", "label": "⚠️ 담당 교사와의 마찰 완화 및 정당한 지도 수용 태도 보완 필요", "original": "수업 중 담당 교사와의 잦은 마찰을 줄이기 위해, 성인의 정당한 지도를 공격으로 받아들이는 방어적 태도를 완화하고 피드백을 수용하는 자세에는 보완이 필요함.", "openers": ["교육 시간 중 담당 교사 및 강사와 빚는 잦은 마찰을 줄이기 위해,", "교사의 정당한 지시와 조언에 즉각 반발하는 태도를 개선하기 위해,", "원활한 직업훈련 참여와 사회생활 적응을 위해서는,", "성인의 권위와 안내에 대한 강한 거부감이 훈련 진행을 가로막고 있으므로,"], "cores": ["교사의 지도를 비난이나 공격으로 받아들이는 방어적 태도를 완화하고 피드백을 수용하는 자세에", "불만이 있을 때 신경질적으로 맞서기보다 감정을 추스르고 예의를 지켜 의사를 표현하는 태도에", "정당한 규칙과 지시를 수용하고 담당 교사와 신뢰 관계를 회복하는 과정에", "순간적인 반항심을 조절하고 교육 절차에 순응하는 기본 태도에"], "closers": ["보완이 필요함.", "집중적인 상담과 지도가 요구됨.", "지속적인 교정이 필요함.", "세심한 개입과 보완이 필요함."]}, {"id": "c3_7", "label": "🔍 독자적 몰입 성향을 조율하여 주변 인식 및 협업 태도 보완 필요", "original": "혼자서 과제에 몰두하는 집중력은 양호하나, 주변 상황을 살피고 또래 아동 및 교사와 호흡을 맞추어 과업을 수행하는 협업 태도에는 보완이 필요함.", "openers": ["자신의 과제에 혼자 몰두하는 집중력과 작업 수행력은 양호하나,", "개별 실습에서 보여주는 몰입도는 강점으로 볼 수 있으나,", "혼자서만 작업을 처리하려는 독자적인 성향이 강한 편이므로,", "실제 직무 환경에서는 타인과의 소통과 협력이 필수적인 만큼,"], "cores": ["주변 상황을 살피고 또래 아동 및 교사와 호흡을 맞추어 과업을 수행하는 협업 태도에는", "자기만의 방식만을 고집하지 않고 공동의 작업 절차와 주변 환경을 고려하는 자세에는", "개인 작업 역량을 공동 실습과 조화롭게 연결하고 타인과 소통하는 기술에는", "주변 아동들과 도구를 공유하고 작업 속도를 조율하는 사회적 작업 태도에는"], "closers": ["보완이 필요함.", "지속적인 지도가 요구됨.", "단계적인 연습과 보완이 필요함.", "세심한 코칭이 필요함."]}, {"id": "c3_8", "label": "⚠️ 만성적 수업 불성실·무기력 해소 및 기초 참여 동기 부여 필요", "original": "수업 전반에 걸친 불성실함과 무기력을 해소하기 위해, 부담이 적은 단기 실습 과제부터 참여를 유도하며 기초적인 학습 및 작업 태도를 형성할 필요가 있음.", "openers": ["수업 전반에 걸친 불성실한 태도와 만성적인 무기력을 해소하기 위해,", "교육과 직업훈련의 의미를 찾지 못하고 시간을 흘려보내는 태도를 개선하기 위해,", "현재의 낮은 수업 참여도와 회피 성향을 완화하기 위해서는,", "기초적인 작업 태도와 학습 동기가 매우 부족한 상태이므로,"], "cores": ["부담이 적은 단기 실습 과제부터 직접 손으로 완성해 보게 하여 기초적인 참여 동기를 형성할", "아동의 적성과 흥미를 재탐색하고 눈높이에 맞춘 개별 과제를 부여하여 수업 이탈을 줄일", "작은 참여에도 즉각적인 피드백을 제공하여 무기력을 줄이고 성실한 출석·참여 습관을 기를", "직업훈련이 자신의 퇴소 후 자립과 어떻게 연결되는지 동기를 부여하고 기본 태도를 다잡아 줄"], "closers": ["필요가 있음.", "지속적인 지도와 독려가 요구됨.", "단계적인 개입이 필요함.", "세심한 지원이 필요함."]}]}]}, {"id": "life", "name": "3. 생활관 규율·일상생활", "shortName": "생활관 규율·일상", "enabled": false, "steps": [{"id": "life_overall", "title": "시설 일과 적응 및 규율 준수", "hint": "기상·취침·점호·이동 등 6호시설 내 기본 규율 수용 태도", "options": [{"id": "l1_1", "label": "시설 일과와 규율을 숙지하고 안정적으로 준수", "original": "시설 내 기상·취침·점호 등 일과 흐름과 생활 규율을 잘 숙지하고 있으며, 정해진 시간 약속과 질서를 안정적으로 지키는 모습이 관찰되고 있음.", "openers": ["시설 내 기상·취침·점호 등 일과 흐름과 생활 규율을 잘 숙지하고 있으며,", "보호시설 내 공동체 수칙과 하루 일과표를 명확히 이해하고 있으며,", "일상생활 전반에서 시간 약속과 생활관 질서를 존중하는 태도를 보이며,", "규칙적인 시설 일과에 무리 없이 적응하여,"], "cores": ["정해진 시간 약속과 질서를 안정적으로 지키는", "별도의 지적 없이도 기본 생활 규범을 스스로 준수하며 생활하는", "담당 교사의 안내에 맞추어 규칙적인 일과에 성실히 참여하는", "공동생활에서 요구되는 기본 예절과 수칙을 모범적으로 따르는"], "closers": ["모습이 관찰되고 있음.", "모습이 확인되고 있음.", "태도를 유지하고 있음.", "모습을 보이고 있음."]}, {"id": "l1_2", "label": "통제에 답답함을 느끼기도 하나 교사 안내 시 순응", "original": "제한된 시설 생활과 규칙에 간혹 답답함을 표현하기도 하나, 교사의 차분한 설명과 일깨움이 있을 때 이를 수용하고 일과를 따르고 있음.", "openers": ["제한된 시설 생활과 엄격한 규칙에 간혹 답답함을 표현하기도 하나,", "활동 전환이나 정해진 생활 수칙 이행 시 간혹 느슨해지는 순간이 있으나,", "단체 생활 특유의 통제된 환경에 때때로 피로감을 보이기도 하나,", "기본 규율은 알고 있으나 상황에 따라 수동적으로 움직이는 경우가 있지만,"], "cores": ["교사의 차분한 설명과 일깨움이 있을 때 이를 수용하고 일과를 따르는", "실무자가 규칙의 취지를 안내하면 반발 없이 자세를 고치고 순응하는", "담당 교사의 지도와 독려가 주어지면 곧바로 일과 흐름에 맞추어 행동하는", "성인의 합리적인 지적에는 수긍하며 정해진 생활 질서를 지키려는"], "closers": ["모습을 보이고 있음.", "모습이 관찰되고 있음.", "태도가 확인되고 있음.", "편임."]}, {"id": "l1_3", "label": "기분에 따라 규칙 준수에 기복이 있어 확인 필요", "original": "일과 규칙은 알고 있으나 개인의 기분 상태나 컨디션에 따라 규율 준수 태도에 다소 기복이 관찰되어 교사의 지속적인 확인이 필요한 편임.", "openers": ["시설의 일과 규칙은 인지하고 있으나,", "기본적인 생활 수칙에 대한 이해는 있으나,", "평소에는 일과를 따라가나 아침 기상이나 준비 시간에는 다소 굼뜬 편으로,", "공동체 규율을 대하는 태도가 아직 완전히 일정하지 않아,"], "cores": ["개인의 기분 상태나 컨디션에 따라 규율 준수 태도에 다소 기복이 나타나는", "자신이 선호하는 일과와 의무적인 수칙 이행 사이에서 참여 태도의 편차가 보이는", "일과 전환 및 약속 시간 준수에 있어 교사의 반복적인 독려와 확인이 요구되는", "순간적인 귀찮음이나 기분 변화로 인해 규칙 이행이 느슨해지는"], "closers": ["모습이 간혹 관찰되고 있음.", "경향이 있어 세심한 점검이 필요한 편임.", "양상이 일부 확인되고 있음.", "경향이 있음."]}, {"id": "l1_4", "label": "⚠️ 생활관 규율 무시·상습 위반 및 통제 불응", "original": "기상·취침 시간과 생활관 수칙을 상습적으로 위반하며, 교사의 정당한 생활 지도에도 반발하고 통제에 따르지 않는 모습이 자주 관찰되고 있음.", "openers": ["기상·취침 시간과 점호 등 시설의 기본 수칙을 상습적으로 위반하며,", "공동체 생활 규율을 가볍게 여기고 자신의 편의대로 행동하려 하며,", "규칙적인 일과와 통제된 생활 환경에 강한 거부감을 드러내며,"], "cores": ["담당 교사의 정당한 생활 지도에도 불만을 표하고 통제에 쉽게 따르지 않는", "야간 취침 시간 소란이나 금지 물품 반입 시도 등 규율 위반 행동을 반복하는", "지적 사항을 수용하지 않고 생활관 질서를 어지럽히는"], "closers": ["모습이 자주 관찰되고 있음.", "문제가 확인되고 있음.", "양상이 이어지고 있음."]}]}, {"id": "life_detail", "title": "생활실 정리·위생·당번 역할 및 통제 수용", "hint": "청소, 위생, 당번 역할, 외출·휴대전화 제한 수용 등", "options": [{"id": "l2_1", "label": "침구 정리·위생 관리 및 당번 역할 성실 수행", "original": "생활실 내 침구 정리와 청소, 개인 위생 관리를 깔끔하게 유지하며, 공동체 내에서 맡은 당번 역할도 책임감 있게 수행하고 있음.", "openers": ["생활실 내 침구 정리와 청소, 개인 위생 관리를 깔끔하게 유지하며,", "자신의 주변 정돈은 물론 개인 위생과 복장 관리를 스스로 챙기며,", "식사 예절과 개인 사물함 정리 등 기본적인 자기관리 습관이 양호하며,", "공동 사용하는 생활 공간을 깨끗하게 쓰려고 노력하며,"], "cores": ["공동체 내에서 맡은 당번 역할도 책임감 있게 수행하는", "배정된 청소 구역과 생활실 내 역할 분담을 성실하게 완수하는", "자신이 맡은 일과 과업을 빠뜨리지 않고 끝까지 챙기는", "생활관 공동 구역 정리에도 협조적으로 참여하는"], "closers": ["모습이 확인되고 있음.", "모습이 관찰되고 있음.", "태도를 보이고 있음.", "습관이 형성되어 있음."]}, {"id": "l2_2", "label": "입소 전 불규칙한 습관으로 정리·청소에 독려 필요", "original": "입소 전 불규칙했던 생활 습관의 영향으로 주변 정리정돈이나 청소 과정을 다소 번거로워하는 경향이 있어 교사의 점검이 필요한 편임.", "openers": ["다만 입소 전 불규칙했던 생활 습관의 영향으로,", "개인 위생은 대체로 챙기나 평소 정리 습관이 충분히 몸에 배지 않아,", "그러나 일상적인 과업 중 자신이 귀찮게 느끼는 활동에서는,", "다만 사물함 정돈이나 활동 후 뒷정리 과정에서는,"], "cores": ["주변 정리정돈이나 청소 과정을 다소 번거로워하며 대략적으로 끝내려는", "사용한 물품을 제자리에 두지 않거나 정리를 미루려는", "정해진 청결 기준을 스스로 유지하기보다 교사의 점검이 있을 때만 정리하는", "생활실 공동 청소나 침구 정돈을 서둘러 마무리하려는"], "closers": ["경향이 관찰되고 있음.", "모습이 종종 보여 꾸준한 독려가 필요한 편임.", "경향이 일부 확인됨.", "모습이 나타나고 있음."]}, {"id": "l2_3", "label": "외출·연락 제한 등 보호시설 규정을 점차 수용", "original": "휴대전화 사용이나 외출이 제한되는 시설 환경에 초기에는 아쉬움을 자주 나타냈으나, 현재는 규정을 이해하고 차분하게 수용하고 있음.", "openers": ["휴대전화 사용이나 외출이 제한되는 보호시설 특유의 환경에 초기에는 아쉬움을 자주 나타냈으나,", "외부 연락과 자유로운 이동이 통제되는 생활에 초반에는 답답함을 호소했으나,", "입소 초기에는 외부 환경에 대한 그리움으로 통제 규정을 부담스러워했으나,", "정해진 면회 및 전화 통화 규정에 대해 초기에는 불만을 보이기도 했으나,"], "cores": ["현재는 시설 규정을 이해하고 차분하게 수용하며 일과에 집중하는", "점차 무료함을 운동이나 직업훈련 등 시설 내 활동으로 건강하게 해소하는", "최근에는 정해진 절차와 규범을 존중하며 안정감 있게 생활하는", "통제된 환경 속에서도 스스로 마음을 다잡고 규칙을 지키려는"], "closers": ["모습을 보이고 있음.", "태도로 변화하고 있음.", "모습이 관찰되고 있음.", "모습이 확인됨."]}, {"id": "l2_4", "label": "⚠️ 공동 당번·청소 회피 및 타 아동에게 떠넘김", "original": "생활실 내 공동 청소나 당번 역할을 의도적으로 회피하며, 자신이 해야 할 몫을 다른 아동에게 떠넘기려는 불성실한 태도가 관찰되고 있음.", "openers": ["생활실 내 공동 청소나 당번 역할을 의도적으로 회피하려 하며,", "개인 위생과 주변 정돈에 무관심할 뿐만 아니라,", "공동체 생활에서 공평하게 분담된 청소 및 정리 시간에,"], "cores": ["자신이 해야 할 몫을 다른 아동에게 강압적으로 떠넘기거나 요령을 피우는", "핑계를 대며 작업에서 빠지려 하고 교사가 볼 때만 시늉을 하는", "공동 구역 관리에 전혀 협조하지 않아 생활실 아동들의 불만을 사는"], "closers": ["모습이 관찰되고 있음.", "태도가 자주 확인되고 있음.", "경향이 나타나고 있음."]}]}, {"id": "life_conclusion", "title": "생활태도 변화 및 향후 지도 방향", "hint": "생활관 규율·일상생활 문단의 마무리 평가", "options": [{"id": "l3_1", "label": "초기 불규칙함에서 벗어나 안정된 생활 리듬 정착", "original": "입소 초기보다 수면과 식사 등 전반적인 생활 리듬이 한결 안정되었으며, 규칙적인 일과 속에서 정서적 여유와 자율성이 점차 늘어나고 있음.", "openers": ["입소 초기보다 수면과 식사 등 전반적인 생활 리듬이 한결 안정되었으며,", "위탁 초기의 불규칙하고 들뜬 모습에서 벗어나 일상 주기가 규칙적으로 자리 잡았으며,", "시간이 경과할수록 시설의 규칙적인 생활 환경에 편안하게 적응하고 있으며,", "생활 전반에서 규율을 대하는 태도가 이전보다 성숙해지고 있으며,"], "cores": ["규칙적인 일과 속에서 정서적 여유와 자기관리 능력이 점차", "스스로 일과를 챙기고 생활 규범을 준수하는 자율성이 꾸준히", "건강한 기본 생활 습관을 정착시켜 나가는 긍정적인 변화가", "남은 위탁 기간 동안에도 안정적이고 모범적인 일상을 이어 갈 모습이"], "closers": ["늘어나고 있음.", "향상되고 있음.", "확인되고 있음.", "관찰되고 있음."]}, {"id": "l3_2", "label": "퇴소 후에도 유지될 자율적 자기관리 습관 보완 필요", "original": "교사의 지도 하에서는 일과와 규칙을 잘 따르고 있으나, 퇴소 후에도 규칙적인 일상을 스스로 유지할 수 있도록 자율적인 생활 습관에는 보완이 필요함.", "openers": ["교사의 지도와 관리 하에서는 일과와 규칙을 잘 따르고 있으나,", "시설 내 타율적인 구조 속에서는 큰 문제 없이 규율을 준수하고 있으나,", "현재의 기본 생활 태도는 점차 호전되고 있으나,", "성인의 안내가 동반될 때는 안정적으로 생활하고 있으나,"], "cores": ["퇴소 후에도 규칙적인 일상을 스스로 유지할 수 있도록 자율적인 생활 습관에는", "외부 통제가 없는 환경에서도 시간 약속과 기본 수칙을 스스로 지키는 자기관리 역량에는", "누군가의 지시 없이도 자신의 주변과 일과를 끝까지 챙기는 주도적인 습관 형성에는", "규칙적인 수면과 생활 리듬을 스스로 계획하고 실천하는 내면화 과정에는"], "closers": ["보완이 필요함.", "지속적인 지도와 보완이 요구됨.", "꾸준한 연습이 필요함.", "단계적인 지원이 필요함."]}, {"id": "l3_3", "label": "⚠️ 엄격한 생활 규율 적용 및 기본 공동체 책임감 확립 시급", "original": "공동체 질서와 기본 생활 규율을 무시하는 태도가 지속되고 있어, 일관된 상벌 규정 적용과 더불어 자신의 역할을 스스로 책임지는 생활 습관 교정이 시급함.", "openers": ["공동체 질서와 기본 생활 규율을 가볍게 여기는 태도가 지속되고 있어,", "반복되는 수칙 위반과 역할 회피가 생활관 분위기에 부정적인 영향을 주고 있으므로,", "규칙 준수에 대한 기본 의식과 공동체 책임감이 매우 부족한 상태이므로,"], "cores": ["명확하고 일관된 생활 규정 적용과 더불어 자신의 몫을 끝까지 완수하게 하는 집중 생활 지도가", "규율 위반에 따르는 책임을 분명히 인식시키고 기본 생활 습관을 바로잡는 엄정한 훈육이", "밀착된 일과 점검을 통해 불규칙하고 타성에 젖은 생활 태도를 교정하는 과정이"], "closers": ["시급함.", "요구됨.", "필수적으로 필요함."]}]}]}, {"id": "trait", "name": "4. 정서·성찰·자립 의지", "shortName": "정서·성찰·자립", "enabled": false, "steps": [{"id": "trait_temperament", "title": "정서 상태 및 감정·충동 조절 특성", "hint": "평소 정서적 안정도, 감정 기복, 분노·충동성, 실무자와의 라포", "options": [{"id": "t1_1", "label": "불안·긴장 완화 및 정서적 안정감 회복", "original": "입소 초기에 보이던 긴장감과 불안정한 모습이 점차 완화되고, 일상 속에서 밝은 표정과 정서적 여유를 보이는 빈도가 늘어나고 있음.", "openers": ["입소 초기에 보이던 긴장감과 불안정한 모습이 점차 완화되고,", "규칙적인 생활과 실무자들의 지지 속에서 정서적 안정을 되찾았으며,", "초반의 경직된 표정과 심리적 위축감이 많이 줄어들었으며,", "시설 생활에 적응함에 따라 내면의 불안도가 낮아지고,"], "cores": ["일상 속에서 밝은 표정과 정서적 여유를 보이는 빈도가", "큰 감정 기복 없이 차분하고 긍정적인 태도로 일과에 임하는 모습이", "성인의 조언과 격려를 편안하게 받아들이는 정서적 수용성이", "주변 상황에 여유 있게 반응하며 안정감을 유지하는 모습이"], "closers": ["늘어나고 있음.", "관찰되고 있음.", "확인되고 있음.", "자리 잡고 있음."]}, {"id": "t1_2", "label": "순간적 감정 기복·충동성이 있으나 면담 후 진정", "original": "간혹 뜻대로 되지 않는 상황에서 순간적인 감정 기복이나 욱하는 반응이 나타나기도 하나, 교사와의 면담을 통해 빠르게 안정을 되찾는 경향이 있음.", "openers": ["간혹 뜻대로 되지 않는 상황에서 순간적인 감정 기복이나 욱하는 반응이 나타나기도 하나,", "평소에는 무난하나 스트레스 상황에서 일시적으로 감정이 앞서는 경향이 있으나,", "다소 다혈질적인 기질이 있어 순간적으로 표정이나 말투가 거칠어질 때가 있으나,", "예상치 못한 지적이나 마찰 앞에서 순간적인 충동성이 관찰되기도 하나,"], "cores": ["교사와의 면담과 조언을 통해 비교적 빠르게 안정을 되찾는", "잠시 생각하는 시간을 가진 뒤 스스로 호흡을 가다듬고 감정을 추스르는", "신뢰하는 실무자의 중재에 귀를 기울이며 갈등을 길게 끌지 않고 진정하는", "자신의 감정 반응을 돌아보고 다시 일상적인 태도로 회복하려는"], "closers": ["경향이 있음.", "모습이 관찰되고 있음.", "모습을 보이고 있음.", "변화가 확인되고 있음."]}, {"id": "t1_3", "label": "속내를 쉽게 드러내지 않으나 신뢰 형성 후 개방", "original": "자신의 개인사나 깊은 속마음을 쉽게 드러내지 않는 신중하고 방어적인 특성이 있으나, 신뢰가 쌓인 교사에게는 점차 고민을 털어놓는 모습을 보임.", "openers": ["자신의 개인사나 깊은 속마음을 쉽게 드러내지 않는 방어적인 특성이 있으나,", "겉으로는 무덤덤하게 행동하며 부정적인 감정을 감추려는 경향이 있으나,", "타인에게 약한 모습을 보이지 않으려고 감정 표현을 절제하는 편이나,", "초기에는 상담이나 면담에서도 단답형으로 일관하며 거리를 두었으나,"], "cores": ["신뢰가 쌓인 교사에게는 점차 마음의 문을 열고 진솔하게 고민을 털어놓는", "성인의 일관된 관심과 경청 속에서 조금씩 자신의 내면 감정을 언어로 표현하는", "개별 상담 시간마다 진지한 태도로 자신의 생각과 불안을 솔직하게 나누는", "정서적 지지와 인정이 주어질 때 안정감을 느끼며 조언을 수용하는"], "closers": ["모습을 보이고 있음.", "모습이 관찰되고 있음.", "변화가 확인되고 있음.", "태도가 늘어나고 있음."]}, {"id": "t1_4", "label": "⚠️ 분노 조절 어려움 및 강한 적대감·충동성 지속", "original": "사소한 자극에도 쉽게 분노를 폭발시키며, 성인과 환경에 대한 강한 적대감과 충동성을 스스로 조절하지 못하는 모습이 관찰되고 있음.", "openers": ["사소한 자극이나 통제에도 쉽게 흥분하며 분노를 폭발시키는 경향이 강하고,", "내면의 좌절감과 성인에 대한 불신·적대감이 매우 높은 상태로,", "감정 기복이 극심하고 충동 조절 능력이 현저히 부족하여,"], "cores": ["교사의 면담이나 진정 유도에도 쉽게 가라앉지 않고 공격적인 감정을 표출하는", "욕구 불만 상황에서 물건을 거칠게 다루거나 위협적인 언행을 보이는", "자신의 감정을 파괴적이거나 강압적인 방식으로 분출하려는"], "closers": ["모습이 관찰되고 있음.", "위험성이 확인되고 있음.", "양상이 지속되고 있음."]}]}, {"id": "trait_reflection", "title": "과거 비행 성찰 및 상담·교정 프로그램 태도", "hint": "처분 원인이 된 과오에 대한 반성, 책임 인식, 상담 참여도", "options": [{"id": "t2_1", "label": "지난 과오를 돌아보고 재비행 방지 의지 표현", "original": "정기 상담과 인성·교정 교육 과정에서 자신의 지난 과오를 진지하게 돌아보고 있으며, 다시는 같은 잘못을 반복하지 않겠다는 의지를 분명히 표현하고 있음.", "openers": ["정기 상담과 인성·교정 교육 과정에서 자신의 지난 과오를 진지하게 돌아보고 있으며,", "처분 원인이 되었던 과거의 잘못된 선택과 행동을 깊이 반성하고 있으며,", "자신의 경솔했던 비행이 본인과 가족에게 미친 영향을 분명히 인식하고 있으며,", "심리상담 및 성찰 프로그램에 진지한 자세로 임하며 과거를 돌아보고 있으며,"], "cores": ["다시는 같은 잘못을 반복하지 않겠다는 재비행 방지 의지를 분명히 표현하는", "성실한 시설 생활을 통해 변화된 모습을 증명하겠다는 다짐을 실천하려는", "준법의식과 책임감을 기르며 바른길로 나아가겠다는 태도를 일관되게 보이는", "과거의 부정적인 습관과 인간관계를 정리하고 새롭게 출발하겠다는 의지를 다지는"], "closers": ["모습이 관찰되고 있음.", "모습이 확인되고 있음.", "태도를 보이고 있음.", "모습이 나타남."]}, {"id": "t2_2", "label": "초기 외부·또래 탓 합리화 → 점차 자신의 책임 인식", "original": "입소 초기에는 자신의 비행 원인을 주변 상황이나 또래 탓으로 돌리며 합리화하는 경향이 있었으나, 최근에는 자신의 잘못된 선택과 책임을 인정하는 모습으로 변화하고 있음.", "openers": ["입소 초기에는 자신의 비행 원인을 주변 상황이나 또래 탓으로 돌리며 합리화하는 경향이 있었으나,", "초반에는 처분 결과에 대한 억울함을 표하거나 책임을 회피하려는 방어적 태도가 보였으나,", "위탁 초기에는 자신의 잘못을 가볍게 여기거나 외부 환경 탓으로 돌리는 모습이 종종 나타났으나,", "초기 상담 시에는 변명을 앞세우며 문제를 객관적으로 바라보지 못하는 모습이었으나,"], "cores": ["최근에는 자신의 잘못된 선택과 책임을 솔직하게 인정하는", "지속적인 면담과 교정 교육을 통해 자신의 과오를 객관적으로 수용하는", "변명보다는 자신이 감당해야 할 책임과 앞으로의 행동 변화에 초점을 맞추려는", "점차 과거 행동의 문제점을 스스로 깨닫고 반성하는 성숙한"], "closers": ["모습으로 변화하고 있음.", "태도가 늘어나고 있음.", "변화가 확인되고 있음.", "모습이 관찰되고 있음."]}, {"id": "t2_3", "label": "상담·교육에 성실히 참여하나 행동 내면화는 진행 중", "original": "심리상담 및 교정 프로그램에는 빠짐없이 참여하며 말로는 반성과 다짐을 표현하고 있으나, 이를 일상 속 행동 변화로 일관되게 실천하는 데에는 지속적인 점검이 필요한 편임.", "openers": ["심리상담 및 교정 프로그램에는 빠짐없이 참여하며 말로는 반성과 다짐을 표현하고 있으나,", "인성교육 시간 중 안내되는 내용은 잘 이해하고 고개를 끄덕이며 공감하나,", "변화에 대한 기본적인 동기는 형성되어 있고 상담 태도도 협조적이나,", "면담 자리에서는 자신의 잘못을 인정하고 바르게 생활하겠다고 약속하나,"], "cores": ["이를 일상 속 행동 변화로 일관되게 실천하고 내면화하는 과정은 아직 진행 중인 것으로", "실제 유혹이나 갈등 상황에서 다짐한 바를 끝까지 지켜내는 자기통제력은 다소 부족한 것으로", "생각의 변화를 구체적인 생활 습관 개선으로 연결하는 데에는 꾸준한 독려가 필요한 것으로", "결심이 주변 분위기에 흔들리지 않도록 지속적인 일깨움과 행동 점검이 요구되는 것으로"], "closers": ["관찰되고 있음.", "확인되고 있음.", "보임.", "나타나고 있음."]}, {"id": "t2_4", "label": "⚠️ 비행에 대한 죄책감 부족·과시 및 상담 거부감 지속", "original": "과거 비행에 대한 진지한 반성이나 죄책감이 부족하며, 오히려 비행 경험을 무용담처럼 과시하거나 상담 및 교정 교육에 냉소적인 태도를 보이고 있음.", "openers": ["처분 원인이 된 과거 비행에 대해 진지한 반성이나 죄책감이 매우 부족하며,", "자신의 잘못을 타인이나 피해자 탓으로 돌리며 합리화하는 태도가 고착되어 있고,", "상담 및 교정 프로그램 시간에 냉소적이거나 방어적인 태도로 일관하며,"], "cores": ["오히려 과거 비행 경험을 또래들에게 무용담처럼 과시하려는", "피해자의 아픔에 전혀 공감하지 못하고 처분에 대한 불만만 드러내는", "교정 교육의 취지를 거부하고 형식적인 대답으로만 면담을 회피하려는"], "closers": ["모습이 관찰되고 있음.", "태도가 지속되고 있음.", "문제가 확인되고 있음."]}]}, {"id": "trait_support", "title": "진로·자립 의지 및 향후 지원 방향", "hint": "퇴소 후 계획, 충동 조절, 자립 및 가족 지지 체계 등 마무리 소견", "options": [{"id": "t3_1", "label": "자격증 취득을 바탕으로 건전한 진로·자립 동기 형성", "original": "시설 내 직업훈련과 자격증 준비를 계기로 퇴소 후 진로에 대해 구체적인 관심을 갖기 시작했으며, 건전한 사회 복귀와 자립을 향한 긍정적인 변화가 확인되고 있음.", "openers": ["시설 내 직업훈련과 자격증 준비를 계기로 퇴소 후 진로에 대해 구체적인 관심을 갖기 시작했으며,", "스스로 기술을 익혀 떳떳하게 자립하겠다는 동기가 점차 뚜렷해지고 있으며,", "미래에 대한 막연한 불안감을 줄이고 구체적인 진로 목표를 세워 실천해 나가고 있으며,", "자격 취득과 직업 교육 과정을 통해 자신의 강점과 진로 방향을 긍정적으로 탐색하고 있으며,"], "cores": ["건전한 사회 복귀와 자립을 향한 긍정적인 변화가", "퇴소 후 안정적인 사회 정착을 준비하는 성숙한 태도가", "스스로의 힘으로 미래를 준비하려는 건강한 자립 의지가", "실질적인 취업 및 학업 복귀를 향한 의미 있는 성장이"], "closers": ["확인되고 있음.", "관찰되고 있음.", "기대되고 있음.", "자리 잡고 있음."]}, {"id": "t3_2", "label": "충동성 조절 훈련 및 구체적 자립·사후관리 계획 필요", "original": "과오를 반성하는 태도는 양호하나, 퇴소 후 재비행을 예방하기 위해 순간적인 충동을 다스리는 연습과 실현 가능한 단계별 자립 계획을 구체화하는 데에는 보완이 필요함.", "openers": ["과오를 반성하는 태도와 시설 적응력은 양호하나,", "현재의 긍정적인 변화가 퇴소 후에도 흔들림 없이 유지되기 위해서는,", "건강한 사회 구성원으로 복귀하려는 기본 의지는 형성되어 있으나,", "남은 위탁 기간과 퇴소 이후의 안정적인 정착을 고려할 때,"], "cores": ["순간적인 충동을 다스리는 연습과 실현 가능한 단계별 진로·자립 계획을 구체화하는 데에는", "재비행 유혹을 차단할 수 있는 자기통제력 강화와 구체적인 사후 관리 체계 구축에는", "보호자와의 유대 회복 및 퇴소 후 일상을 안정적으로 이어 갈 정서적·제도적 지지에는", "막연한 다짐을 넘어 실제 사회생활에서 겪을 어려움을 이겨낼 현실적인 자립 준비에는"], "closers": ["보완이 필요함.", "지속적인 지원과 보완이 요구됨.", "세심한 지도와 관리가 필요함.", "꾸준한 상담과 지원이 병행되어야 함."]}, {"id": "t3_3", "label": "⚠️ 왜곡된 비행 인식 교정 및 전문 심리·정신건강 치료 개입 시급", "original": "높은 공격성과 왜곡된 비행 인식이 지속되고 있어, 재비행 방지를 위한 집중적인 인지행동 교정과 전문적인 심리·정신건강 치료 개입이 시급함.", "openers": ["높은 공격성과 충동성, 왜곡된 비행 인식이 개선되지 않고 있어,", "준법의식 결여와 감정 조절 실패가 재비행 위험을 높이고 있으므로,", "현재의 반사회적 태도와 극심한 정서적 불안정을 완화하기 위해서는,"], "cores": ["재비행 방지를 위한 강도 높은 인지행동 교정 교육과 전문적인 심리·정신건강 치료 개입이", "자신의 행동 결과를 직면하게 하는 집중 상담과 분노·충동 조절을 위한 전문 치료 연계가", "엄격한 행동 관리 체계 속에서 왜곡된 가치관을 교정하는 장기적이고 전문적인 개입이"], "closers": ["시급함.", "절실히 요구됨.", "필수적으로 병행되어야 함."]}]}]}];
+    const MONTHLY_PROGRESSION_DB = {"peer": {"distance": {"detectedLabel": "전월 감지: 원만하나 깊은 관계보다 일정한 거리 유지", "keywords": ["일정한 거리", "심리적 거리", "선을 지키", "깊게 발전", "깊이 밀착"], "options": [{"id": "mp_dist_1", "badge": "🌱 소폭 성장", "label": "경계심을 조금씩 늦추고 마음이 맞는 또래 아동에게 먼저 속내를 나누기 시작함", "openers": ["{month_prefix} 지난달까지 유지하던 방어적인 거리감을 조금씩 좁히며,", "{month_prefix} 전월에는 또래 아동과 일정한 선을 긋는 모습이 뚜렷했으나 최근에는,", "{month_prefix} 이전 회차 보고 시점보다 또래 아동을 향한 심리적 경계를 한결 늦추고,"], "cores": ["마음이 맞는 또래 아동에게 먼저 자신의 생각과 고민을 조금씩 털어놓기 시작하는", "피상적인 대화를 넘어 일상적인 감정을 공유하며 친밀도를 높여 가는", "스스로 정해 두었던 거리를 완화하고 공동 활동에서 한층 가까워진"], "closers": ["유의미한 변화가 관찰되고 있음.", "긍정적인 성장이 확인되고 있음.", "모습으로 발전하고 있음."]}, {"id": "mp_dist_2", "badge": "📈 뚜렷한 성장", "label": "심리적 거리 두기를 극복하고 또래 아동들과 깊은 신뢰·유대감을 형성함", "openers": ["{month_prefix} 전월까지 관찰되던 심리적 거리 두기 경향에서 벗어나,", "{month_prefix} 지난달에 비해 또래 아동들과의 정서적 교류가 한층 깊어지면서,", "{month_prefix} 이전보다 타 아동을 신뢰하고 받아들이는 폭이 크게 넓어져,"], "cores": ["또래 아동들과 깊이 있는 대화를 나누고 서로 돕는 돈독한 유대 관계를 형성하는", "자신의 속마음을 자연스럽게 개방하며 생활관 내에서 안정적인 신뢰 관계를 구축하는", "거리감을 두던 태도를 극복하고 공동체 내 아동들과 끈끈하게 어울리는"], "closers": ["뚜렷한 성장이 확인되고 있음.", "바람직한 변화가 관찰되고 있음.", "모습이 안정적으로 자리 잡고 있음."]}, {"id": "mp_dist_3", "badge": "➡️ 안정 유지", "label": "적정한 거리를 유지하면서도 마찰 없이 유연하고 원만한 관계를 지속함", "openers": ["{month_prefix} 지난달과 마찬가지로 적정한 심리적 거리를 유지하는 기질은 남아 있으나,", "{month_prefix} 전월에 확인된 유연하고 안정적인 교우 관계 방식을 이번 달에도 꾸준히 이어 가며,"], "cores": ["불필요한 감정 소모나 마찰 없이 대부분의 또래 아동과 평온하고 우호적인 관계를 지속하는", "자신만의 선을 지키면서도 공동체 활동에서는 협조적이고 부드러운 태도를 유지하는"], "closers": ["안정적인 모습이 확인되고 있음.", "모습이 일관되게 관찰되고 있음."]}, {"id": "mp_dist_4", "badge": "➖ 변화 없음", "label": "지난 회차와 비교해 변화 없이 표면적 대화에만 머물며 일정한 거리를 그대로 유지함", "openers": ["{month_prefix} 지난 회차 보고 시점과 비교해 볼 때 뚜렷한 태도 변화 없이,", "{month_prefix} 한 달이 경과한 현재까지도 타 아동에게 속내를 드러내는 데에는 전월과 다름없이 조심스러워하며,", "{month_prefix} 전월과 비교하여 교우 관계의 깊이에서 별다른 변화가 나타나지 않고 있으며,"], "cores": ["관계를 깊게 발전시키기보다 여전히 일정한 심리적 거리를 유지하려는 경향이", "표면적인 원만함 수준에 머문 채 깊이 있는 유대 형성은 회피하는 모습이", "일상 대화는 나누나 정서적 친밀도를 높이지 않고 거리를 두는 태도가"], "closers": ["변화 없이 그대로 지속되고 있음.", "전월과 동일하게 관찰되고 있음.", "변함없이 이어지고 있음."]}, {"id": "mp_dist_5", "badge": "📉 오히려 악화", "label": "지난 회차보다 오히려 거리감이 더 멀어지고 타 아동과의 교류를 피하며 고립되는 경향 심화", "openers": ["{month_prefix} 지난 회차에서는 기본적인 대화와 원만한 관계가 유지되었으나 이번 달 들어 오히려 태도가 좋지 않아져,", "{month_prefix} 전월과 비교할 때 또래 아동들과 두던 심리적 거리감이 오히려 더욱 심화되면서,", "{month_prefix} 이전 회차보다 대인관계에서의 방어적이고 폐쇄적인 태도가 오히려 강해져,"], "cores": ["주변 아동들과 나누던 일상적인 대화마저 줄어들고 스스로 고립되려는", "타 아동의 접근에 예민하게 반응하며 관계를 단절하거나 회피하려는", "이전보다 또래 관계가 위축되고 공동체 활동에서도 겉도는"], "closers": ["부정적인 변화가 관찰되어 세심한 개입이 필요함.", "모습으로 악화되는 양상이 확인되고 있음.", "경향이 심화되고 있어 주의 깊은 지도가 요구됨."]}]}, "violence": {"detectedLabel": "전월 감지: 폭력성·강압적 태도 및 위압적 언행", "keywords": ["폭력", "강압", "위압", "공격", "서열", "복종", "굴복"], "options": [{"id": "mp_vio_1", "badge": "🌱 소폭 완화", "label": "강압적 언행 빈도가 전월보다 줄고, 화가 날 때 일단 참거나 자리를 피하려 시도함", "openers": ["{month_prefix} 지난달까지 빈번했던 폭력적이고 강압적인 언행이 집중 지도를 통해 조금씩 줄어들고 있으며,", "{month_prefix} 전월에는 감정이 상할 때 즉각 위압적인 태도를 보였으나 이번 달 들어서는,"], "cores": ["순간적으로 화가 치밀어 오를 때 교사의 제지를 의식하고 일단 자리를 피하거나 참으려 시도하는", "또래 아동을 힘으로 누르기보다 불만을 말로 표현해 보려는 초기 단계의 노력이 나타나는", "거친 언행의 빈도가 이전 달보다 완화되며 스스로 행동을 조심하려는"], "closers": ["변화가 관찰되기 시작함.", "모습이 조금씩 확인되고 있음.", "긍정적인 조짐이 보이고 있음."]}, {"id": "mp_vio_2", "badge": "📈 뚜렷한 개선", "label": "폭력적·강압적 태도를 멈추고 타 아동의 의견을 존중하며 평등하게 소통함", "openers": ["{month_prefix} 전월에 주요 문제로 지적되었던 강압적이고 위압적인 태도가 눈에 띄게 개선되어,", "{month_prefix} 지속적인 상담과 훈육을 통해 힘을 앞세우던 관계 방식에서 벗어나,"], "cores": ["이번 달에는 물리적·언어적 폭력 없이 또래 아동들의 입장을 존중하며 수평적으로 대화하는", "갈등 상황에서도 위협적인 언행 대신 타협점을 찾으며 생활관 내 평온한 분위기를 유지하는"], "closers": ["괄목할 만한 성장이 확인되고 있음.", "모습으로 뚜렷하게 변화하고 있음."]}, {"id": "mp_vio_3", "badge": "➖ 변화 없음", "label": "지난 회차와 비교해 아무런 변화 없이 이번 달에도 폭력성·강압적 태도가 그대로 반복됨", "openers": ["{month_prefix} 지난달 보고 이후 강압적 태도 교정을 위한 집중 지도를 실시하였으나 아무런 변화 없이,", "{month_prefix} 지난 회차 대비 한 달의 시간이 경과했음에도 공격적인 성향이 전혀 개선되지 않아,"], "cores": ["이번 달에도 여전히 자신의 요구를 관철하기 위해 타 아동에게 위압감과 폭력성을 드러내는", "생활관 내 서열을 나누려 하거나 약한 또래 아동을 강압적으로 통제하려는 행동이"], "closers": ["전월과 동일하게 반복되고 있어 엄중한 관리가 요구됨.", "변화 없이 그대로 지속되고 있음."]}, {"id": "mp_vio_4", "badge": "📉 오히려 악화", "label": "지난 회차보다 폭력성·강압적 태도가 오히려 더 심해지고 타 아동과의 마찰 빈도가 증가함", "openers": ["{month_prefix} 지난 회차보다 감정 조절 실패와 공격적인 성향이 오히려 더욱 악화되어,", "{month_prefix} 전월에 비해 교사의 통제에 반발하는 강도가 높아지고 폭력성이 한층 심해지면서,"], "cores": ["사소한 자극에도 타 아동에게 거친 욕설과 위협을 가하거나 강압적으로 굴복시키려는 행동이", "생활관 내 다수 아동들과 심각한 마찰을 일으키며 공동체 안전과 분위기를 해치는 양상이"], "closers": ["이전 달보다 더욱 빈번하게 나타나 집중 분리 및 엄정한 조치가 시급함.", "오히려 심화되고 있는 것으로 확인됨."]}]}, "isolation": {"detectedLabel": "전월 감지: 대인관계 완전 단절 및 고립", "keywords": ["전혀 형성하지", "전혀 맺지", "고립", "외톨이", "단절", "접촉을 차단"], "options": [{"id": "mp_iso_1", "badge": "🌱 소폭 변화", "label": "완전한 단절에서 벗어나 눈맞춤이나 짧은 단답형 대화를 조금씩 시작함", "openers": ["{month_prefix} 지난달까지 누구와도 말을 섞지 않던 극단적인 고립 상태에서 조금씩 벗어나,", "{month_prefix} 전월에는 타 아동의 접근 자체를 완전히 차단했으나 최근 들어서는,"], "cores": ["담당 교사나 짝을 이룬 또래 아동의 인사에 눈을 맞추고 짧은 단답형으로나마 대답하는", "여전히 조용한 편이나 공동 활동 시간 중 자리를 이탈하지 않고 또래 아동 곁에 머무르는", "소수의 온화한 또래 아동과는 짧은 일상 대화를 주고받기 시작하는"], "closers": ["작지만 의미 있는 변화가 관찰되고 있음.", "초기 관계 형성의 움직임이 확인되고 있음."]}, {"id": "mp_iso_2", "badge": "📈 뚜렷한 호전", "label": "고립 상태에서 벗어나 소수 또래 아동과 대화를 나누고 공동체 활동에 합류함", "openers": ["{month_prefix} 전월까지 지속되던 심각한 대인 기피와 단절 양상이 크게 완화되어,", "{month_prefix} 꾸준한 1:1 상담과 관계 중재를 통해 마음의 문을 열기 시작하면서,"], "cores": ["이번 달에는 생활실 아동들과 자연스럽게 대화를 나누고 여가 활동에도 함께 참여하는", "스스로 고립을 자처하던 모습에서 벗어나 또래 집단 속에서 안정감을 찾아가는"], "closers": ["긍정적인 성장이 확인되고 있음.", "뚜렷한 회복세가 관찰되고 있음."]}, {"id": "mp_iso_3", "badge": "➖ 변화 없음", "label": "지난 회차와 동일하게 전혀 변화 없이 이번 달에도 대인관계를 맺지 못하고 단절 지속", "openers": ["{month_prefix} 지난 회차에 이어 이번 달에도 타 아동과의 관계 형성을 극도로 회피하며 아무런 변화가 나타나지 않고,", "{month_prefix} 전월 보고 시점 이후 지속적인 소통 유도에도 불구하고 별다른 진전 없이,"], "cores": ["여전히 또래 아동들과 대인관계를 전혀 맺지 못한 채 생활관 내에서 홀로 고립되어 지내는", "대화와 눈맞춤을 거부하며 주변 아동들과 완전히 단절된 상태가"], "closers": ["변함없이 이어지고 있음.", "이번 달에도 그대로 지속되고 있음."]}, {"id": "mp_iso_4", "badge": "📉 오히려 악화", "label": "지난 회차보다 대인 거부감과 은둔·회피 성향이 오히려 더욱 심해져 교사 접촉마저 거부함", "openers": ["{month_prefix} 지난 회차보다 대인 기피와 심리적 위축이 오히려 더욱 깊어지면서,", "{month_prefix} 전월에 비해 외부 자극과 타 아동에 대한 거부 반응이 한층 심화되어,"], "cores": ["또래 아동뿐만 아니라 담당 교사와의 기본적인 면담이나 접촉마저 강하게 거부하며 고립되는", "누군가 다가오면 신경질적인 거부감을 드러내며 공동 일과 참여 자체를 회피하려는"], "closers": ["악화된 양상이 관찰되어 전문적인 심리 개입이 시급함.", "모습이 심화되고 있는 것으로 확인됨."]}]}, "general_peer": {"detectedLabel": "전월 대비 또래·공동체 관계 일반 변화 선택", "keywords": [], "options": [{"id": "mp_gen_p1", "badge": "📈 한층 성숙", "label": "전월보다 또래 아동 수용 폭이 더욱 넓어지고 갈등을 중재·배려하는 여유가 생김", "openers": ["{month_prefix} 지난달에 비해 공동체 생활에 대한 적응력과 심리적 여유가 한층 깊어지면서,", "{month_prefix} 전월보다 또래 아동들을 대하는 태도가 더욱 성숙해져,"], "cores": ["자신의 주장을 앞세우기보다 타 아동의 이야기를 먼저 경청하고 갈등 상황을 부드럽게 중재하는", "새로 입소한 아동이나 어려워하는 또래 아동을 먼저 챙기며 긍정적인 분위기를 이끄는"], "closers": ["모습으로 한 단계 더 성장하고 있음.", "발전된 사회성이 확인되고 있음."]}, {"id": "mp_gen_p2", "badge": "🌱 점진적 호전", "label": "전월에 간혹 보이던 신경전·방어적 태도가 줄어들고 대화가 부드러워짐", "openers": ["{month_prefix} 지난달까지 간혹 관찰되던 방어적인 말투나 자존심 대립이 점차 줄어들고,", "{month_prefix} 전월과 비교할 때 감정적으로 대응하는 빈도가 낮아지면서,"], "cores": ["의견 차이가 생겨도 한 걸음 물러서서 대화로 조율하려는 시도가 늘어나는", "주변 아동들과 마찰 없이 원만하게 어울리는 시간이 현저히 증가한"], "closers": ["긍정적인 변화가 관찰되고 있음.", "모습이 확인되고 있음."]}, {"id": "mp_gen_p3", "badge": "➖ 변화 없음", "label": "지난 회차와 비교해 뚜렷한 변화 없이 이전 달과 동일한 또래 관계 양상이 그대로 유지됨", "openers": ["{month_prefix} 지난 회차 보고 시점과 비교할 때 교우 관계에서 두드러진 변화는 관찰되지 않으며,", "{month_prefix} 한 달간 이전 회차와 대체로 유사한 대인관계 패턴을 이어 가며,"], "cores": ["지난달에 보였던 또래 상호작용 방식과 장단점이 큰 차이 없이 그대로 유지되는", "관계의 폭이나 깊이에서 뚜렷한 진전이나 급격한 변화 없이 기존의 태도를 답습하는"], "closers": ["모습이 확인되고 있음.", "양상이 이어지고 있음."]}, {"id": "mp_gen_p4", "badge": "📉 오히려 악화", "label": "지난 회차까지는 무난했으나 이번 달 들어 타 아동과의 마찰·강압적 태도가 늘어나는 등 관계 악화", "openers": ["{month_prefix} 지난 회차까지는 비교적 무난한 교우 관계를 유지했으나 이번 달 들어 태도가 오히려 좋지 않아져,", "{month_prefix} 전월에 비해 감정 기복과 자기중심적인 태도가 강해지면서,"], "cores": ["사소한 문제로 또래 아동들과 빈번하게 언쟁을 벌이거나 신경질적으로 대립하는", "주변 아동들의 의견을 무시하고 거친 언행을 보이는 등 대인관계가 이전보다 경직되고 악화되는"], "closers": ["모습이 관찰되어 집중적인 생활 지도가 요구됨.", "양상이 확인되어 세심한 주의가 필요함."]}]}}, "class": {"thinking_gap": {"detectedLabel": "전월 감지: 이해도는 양호하나 깊은 사고 활동 회피·자기주도 해결 보완 필요", "keywords": ["충분한 사고", "부담이 적은 방식", "생각하는 과정", "스스로 해결 방법", "이론 정리"], "options": [{"id": "mc_think_1", "badge": "🌱 소폭 성장", "label": "사고가 필요한 과제에서도 바로 포기하지 않고 교사의 힌트를 받아 끝까지 참여함", "openers": ["{month_prefix} 지난달에는 깊은 사고가 필요한 활동에서 쉬운 방식만 택하려는 경향이 강했으나,", "{month_prefix} 전월 보고 시점과 비교할 때 생각하는 과정에 대한 막연한 부담감이 다소 완화되어,"], "cores": ["이번 달에는 다소 복잡한 과제가 주어져도 곧바로 회피하지 않고 교사의 힌트를 바탕으로 끝까지 해결해 보려는", "신체·실습 활동뿐만 아니라 이론 및 문제 해결 과정에서도 이전보다 긴 시간 집중하여 참여하려는", "모르는 부분을 그냥 넘기지 않고 질문하며 스스로 답을 찾아보려는"], "closers": ["초기 단계의 긍정적인 변화가 관찰되고 있음.", "성장하는 모습이 확인되고 있음.", "노력이 눈에 띄게 늘어나고 있음."]}, {"id": "mc_think_2", "badge": "📈 뚜렷한 성장", "label": "전월 보완점(사고 회피)을 극복하고, 어려운 실습·필기 과제도 스스로 고민해 완수함", "openers": ["{month_prefix} 지난달 보완점으로 확인되었던 수동적인 사고 태도에서 뚜렷한 성장을 보여,", "{month_prefix} 전월에 비해 과제 집착력과 자기주도적 문제 해결 태도가 크게 향상되면서,"], "cores": ["충분한 사고와 응용이 요구되는 자격증 필기 및 심화 실습 과제에서도 스스로 해결 방법을 찾아 완수하는", "단순히 교사의 안내를 따라가는 수준을 넘어 작업 원리를 고민하고 끈기 있게 과제를 마무리하는", "어려운 문제 앞에서도 간단히 넘어가려 하지 않고 끝까지 생각하여 해결해 내는"], "closers": ["바람직한 발전이 확인되고 있음.", "성숙한 학습 태도가 자리 잡고 있음.", "의미 있는 성장이 관찰되고 있음."]}, {"id": "mc_think_3", "badge": "📈 자격증 진전", "label": "선호하던 실습 흥미를 자격증 취득 목표로 연결하여 필기·실기 준비에 매진함", "openers": ["{month_prefix} 전월까지 단순 체험 위주로 선호하던 실습 흥미가 구체적인 자격증 취득 목표로 발전하여,", "{month_prefix} 지난달에 비해 직업훈련에 임하는 목표 의식이 한층 뚜렷해지면서,"], "cores": ["이번 달에는 실기 연습은 물론 평소 부담스러워하던 필기 기출문제 풀이에도 성실하게 몰입하는", "자격 검정 합격이라는 목표 아래 반복 숙련 과정과 이론 학습을 끈기 있게 병행하는"], "closers": ["긍정적인 성장이 확인되고 있음.", "모습이 뚜렷하게 관찰되고 있음."]}, {"id": "mc_think_4", "badge": "➖ 변화 없음", "label": "지난 회차와 비교해 변화 없이 신체·실습만 선호하고, 사고가 필요한 활동은 여전히 간단히 넘김", "openers": ["{month_prefix} 지난 회차 보고 시점과 비교해 볼 때 과제 수행 태도에서 뚜렷한 변화가 나타나지 않아,", "{month_prefix} 전월 대비 한 달이 경과한 현재까지도 선호 과목에 따른 참여 편차가 그대로 이어져,"], "cores": ["여전히 신체활동이나 단순 실습만 선호하고 깊은 사고가 필요한 과제에서는 부담이 적은 방식으로만 참여하려는 경향이", "스스로 고민하고 해결책을 찾아가는 과정에 대한 소극적인 태도가"], "closers": ["지난달과 동일하게 지속되고 있음.", "변화 없이 그대로 관찰되고 있음."]}, {"id": "mc_think_5", "badge": "📉 오히려 악화", "label": "지난 회차보다 수업 태도가 오히려 나빠져 조금만 어려운 과제도 아예 거부하거나 포기함", "openers": ["{month_prefix} 지난 회차보다 학습 및 직업훈련에 대한 인내심과 참여 의욕이 오히려 떨어지면서,", "{month_prefix} 전월에는 간단한 방식으로나마 과제에 참여했으나 이번 달 들어 태도가 오히려 좋지 않아져,"], "cores": ["조금만 사고가 필요하거나 반복 연습이 요구되는 과제는 아예 시작조차 하지 않고 포기해 버리는", "전반적인 수업 집중도가 전월보다 저하되고 교사의 안내에도 수동적이고 불성실하게 반응하는"], "closers": ["악화된 모습이 관찰되어 학습 동기 재점검이 필요함.", "경향이 심화되고 있는 것으로 확인됨."]}]}, "insincere_disrupt": {"detectedLabel": "전월 감지: 수업 불성실·무기력·수업 방해·교사 마찰", "keywords": ["불성실", "엎드려", "딴청", "무기력", "수업 거부", "이탈", "방해", "소란", "마찰", "반발"], "options": [{"id": "mc_dis_1", "badge": "🌱 소폭 개선", "label": "수업 방해·교사 마찰 빈도가 전월보다 줄고, 정해진 시간 동안 착석을 유지하기 시작함", "openers": ["{month_prefix} 지난달까지 빈번했던 수업 중 소란이나 담당 교사와의 마찰이 이번 달 들어 눈에 띄게 줄어들었으며,", "{month_prefix} 전월에는 수업 태도가 매우 불성실하고 반발심이 강했으나 지속적인 면담과 지도 이후,"], "cores": ["아직 적극적인 몰입까지는 아니더라도 다른 아동을 방해하지 않고 정해진 시간 동안 자리를 지키는", "교사의 지적에 즉각 말대꾸하던 태도를 자제하고 안내에 따라 기초 실습 과제를 조금씩 따라 하는", "엎드려 자거나 이탈하려는 빈도가 줄고 본인이 흥미를 느끼는 실습 시간에는 참여하려는"], "closers": ["긍정적인 태도 변화가 시작되고 있음.", "기초적인 수업 규율 수용 모습이 관찰되고 있음."]}, {"id": "mc_dis_2", "badge": "📈 뚜렷한 호전", "label": "불성실한 태도와 반발심을 극복하고, 교사 지도에 순응하며 직업훈련에 성실히 임함", "openers": ["{month_prefix} 전월에 주요 문제로 나타났던 수업 불성실 및 교사와의 갈등 양상이 크게 호전되어,", "{month_prefix} 지난달과 비교할 때 교육과 직업훈련을 대하는 태도가 완전히 달라져,"], "cores": ["이번 달에는 담당 교사의 피드백을 차분히 수용하며 주어진 실습 과제를 끝까지 성실하게 수행하는", "주변 아동들의 학습을 방해하던 행동을 멈추고 차분한 분위기 속에서 자격증 과정에 집중하는"], "closers": ["괄목할 만한 성장이 확인되고 있음.", "바람직한 변화가 뚜렷하게 관찰되고 있음."]}, {"id": "mc_dis_3", "badge": "➖ 변화 없음", "label": "지난 회차와 비교해 아무런 변화 없이 수업 불성실·타 아동 방해·교사 마찰이 그대로 반복됨", "openers": ["{month_prefix} 지난달 보고 이후 기본 수업 규율 확립을 위해 반복적인 지도를 실시하였으나 아무런 변화 없이,", "{month_prefix} 지난 회차와 비교해 볼 때 교육 참여 태도와 규율 수용성에 전혀 진전이 없어,"], "cores": ["이번 달에도 수업 중 엎드려 있거나 잡담과 소란으로 다른 아동들의 학습을 방해하는 모습이", "정당한 지도에 신경질적으로 반발하며 담당 교사와 마찰을 빚는 불성실한 태도가"], "closers": ["개선되지 않고 그대로 지속되고 있음.", "전월과 동일하게 반복되고 있어 단호한 개입이 요구됨."]}, {"id": "mc_dis_4", "badge": "📉 오히려 악화", "label": "지난 회차보다 수업 거부·이탈·타 아동 방해 및 교사에 대한 반항이 오히려 더욱 심화됨", "openers": ["{month_prefix} 지난 회차보다 수업 및 직업훈련에 대한 거부감과 반항적인 태도가 오히려 더욱 악화되어,", "{month_prefix} 전월에 비해 수업 시간 중 산만함과 통제 불응 양상이 한층 심해지면서,"], "cores": ["아예 수업 참여를 거부하며 자리를 이탈하려 하거나 고의적인 소란으로 타 아동들의 수업을 심각하게 방해하는", "담당 교사의 정당한 지도에 거친 언사로 맞서며 교육 진행을 어렵게 만드는 행동이"], "closers": ["이전 달보다 더욱 심화되고 있어 강력한 행동 제한과 집중 지도가 시급함.", "오히려 악화된 것으로 확인됨."]}]}, "solitary_focus": {"detectedLabel": "전월 감지: 혼자서만 집중하고 주변·협동 과정 무관심", "keywords": ["혼자서만", "독자적인", "협동 과정은 전혀", "자기 할 일만"], "options": [{"id": "mc_sol_1", "badge": "🌱 소폭 변화", "label": "혼자만 몰두하던 태도에서 벗어나 공용 도구 양보 및 교사의 조율에 조금씩 반응함", "openers": ["{month_prefix} 지난달에는 주변을 전혀 의식하지 않고 혼자서만 작업에 매몰되는 경향이 강했으나,", "{month_prefix} 전월 대비 개별 몰입 성향을 조율하는 코칭이 이어지면서,"], "cores": ["이번 달에는 공용 도구를 타 아동과 나누어 쓰고 교사의 진행 속도 안내에 맞추려는", "여전히 개별 작업을 선호하나 조별 실습 시 맡은 역할을 또래 아동들과 맞추어 수행해 보려는"], "closers": ["긍정적인 변화가 조금씩 관찰되고 있음.", "협업 태도의 성장이 확인되고 있음."]}, {"id": "mc_sol_2", "badge": "📈 뚜렷한 호전", "label": "독자적 고집을 줄이고 또래 아동들과 소통·협력하며 공동 실습 과제를 원만히 수행함", "openers": ["{month_prefix} 전월까지 두드러졌던 독자적인 작업 고집이 크게 완화되어,", "{month_prefix} 지난달에 비해 주변 상황과 타 아동의 작업 속도를 배려하는 여유가 생기면서,"], "cores": ["개인 집중력을 유지하면서도 조별 실습과 협동 과제에서 또래 아동들과 원활하게 호흡을 맞추는", "교사의 추가 안내와 주변의 협조 요청을 적극적으로 수용하며 조화롭게 훈련에 임하는"], "closers": ["뚜렷한 성장이 확인되고 있음.", "바람직한 변화가 관찰되고 있음."]}, {"id": "mc_sol_3", "badge": "➖ 변화 없음", "label": "지난 회차와 동일하게 아무 변화 없이 개인 작업에만 몰두하고 주변·협동 과정에는 무관심함", "openers": ["{month_prefix} 지난 회차와 비교해 볼 때 작업 방식에서 별다른 변화가 나타나지 않아,", "{month_prefix} 전월에 이어 이번 달에도 독자적인 작업 성향이 그대로 유지되어,"], "cores": ["주변 아동들의 상황이나 협동이 필요한 실습 과정에는 신경 쓰지 않고 자기 방식대로만 진행하려는 경향이", "타 아동과 호흡을 맞추기보다 혼자서만 과제를 처리하려는 모습이"], "closers": ["변함없이 관찰되고 있어 협업 지도가 계속 필요함.", "이번 달에도 동일하게 확인되고 있음."]}, {"id": "mc_sol_4", "badge": "📉 오히려 악화", "label": "지난 회차보다 독자적 고집이 오히려 심해져 공용 도구 독점 및 협동 거부로 타 아동과 마찰 발생", "openers": ["{month_prefix} 지난 회차보다 자기만의 작업 방식을 고집하는 태도가 오히려 더욱 경직되면서,", "{month_prefix} 전월에 비해 주변 간섭이나 공동 실습에 대한 거부 반응이 한층 강해져,"], "cores": ["공용 실습 도구를 독점하거나 조별 활동을 완강히 거부하여 함께 수업받는 아동들과 마찰을 빚는", "교사의 조율 안내마저 무시한 채 자기 고집대로만 작업을 강행하려는"], "closers": ["악화된 모습이 관찰되어 집중적인 태도 교정이 요구됨.", "문제가 오히려 심화되고 있음."]}]}, "general_class": {"detectedLabel": "전월 대비 수업·직업훈련 일반 변화 선택", "keywords": [], "options": [{"id": "mc_gen_c1", "badge": "📈 숙련도 향상", "label": "전월보다 실습 기능 숙련도와 과제 완성도가 한 단계 높아지고 자신감이 붙음", "openers": ["{month_prefix} 지난달에 익힌 기초 기능을 바탕으로 이번 달에는 작업 숙련도가 한층 향상되었으며,", "{month_prefix} 전월 대비 직업훈련 과정에 대한 이해도와 손기술이 눈에 띄게 발전하여,"], "cores": ["실습 과제의 완성도가 높아지고 스스로 해낼 수 있다는 성취감과 자신감을 표현하는", "교사의 도움 없이도 작업 절차를 정확히 수행하며 심화 과제에도 의욕적으로 도전하는"], "closers": ["모습이 확인되고 있음.", "긍정적인 성장이 관찰되고 있음."]}, {"id": "mc_gen_c2", "badge": "➖ 변화 없음", "label": "지난 회차와 비교해 수업 참여도나 과제 수행 태도에서 뚜렷한 변화 없이 기존 모습 유지", "openers": ["{month_prefix} 지난 회차 보고 시점과 비교할 때 수업 참여도 및 과제 수행 태도에서 특별한 변화는 없으며,", "{month_prefix} 한 달간 이전 회차와 대체로 동일한 학습 태도와 참여 수준을 이어 가며,"], "cores": ["지난달에 관찰되었던 수업 선호도와 과제 수행 양상이 큰 차이 없이 그대로 유지되는", "학습 역량이나 참여 태도 면에서 두드러진 진전이나 변화 없이 기존의 모습을 이어 가는"], "closers": ["모습이 확인되고 있음.", "양상이 관찰되고 있음."]}, {"id": "mc_gen_c3", "badge": "📉 오히려 악화", "label": "지난 회차보다 수업 집중도와 참여 의욕이 눈에 띄게 떨어지고 태도가 불성실해짐", "openers": ["{month_prefix} 지난 회차까지는 비교적 무난하게 수업에 참여했으나 이번 달 들어 태도가 오히려 좋지 않아져,", "{month_prefix} 전월에 비해 교육 및 직업훈련에 대한 흥미와 집중력이 현저히 저하되면서,"], "cores": ["수업 시간 중 지루해하며 딴청을 피우거나 주어진 실습 과제를 대충 끝내려는 불성실한 모습이", "교사의 안내에 수동적으로 반응하고 과제 수행을 회피하려는 경향이"], "closers": ["이전 달보다 늘어나 학습 태도 재확립을 위한 지도가 필요함.", "오히려 심화되는 양상이 확인되고 있음."]}]}}, "life": {"rule_violation": {"detectedLabel": "전월 감지: 생활관 규율 위반·통제 불응·당번/청소 회피", "keywords": ["상습적으로 위반", "통제에 쉽게 따르지", "회피하려", "떠넘기", "번거로워", "기복이 나타"], "options": [{"id": "ml_vio_1", "badge": "🌱 소폭 개선", "label": "기상·점호 지체 및 청소 회피가 전월보다 줄고 교사 독려 시 자기 몫을 수행하기 시작함", "openers": ["{month_prefix} 지난달까지 잦았던 생활관 수칙 위반이나 뒷정리 회피 모습이 점차 줄어들고 있으며,", "{month_prefix} 전월에는 통제에 반발하거나 당번 역할을 미루는 경향이 강했으나 이번 달 들어서는,"], "cores": ["담당 교사의 독려가 있을 때 기상·점호 시간을 지키고 자신이 맡은 청소 구역을 마무리하려는", "타 아동에게 할 일을 떠넘기던 행동을 자제하고 기본적인 생활관 질서를 따르려는"], "closers": ["긍정적인 태도 변화가 관찰되고 있음.", "초기 단계의 개선 양상이 확인되고 있음."]}, {"id": "ml_vio_2", "badge": "📈 뚜렷한 호전", "label": "불규칙했던 습관과 규율 위반을 고치고 정해진 일과와 당번 역할을 성실히 수행함", "openers": ["{month_prefix} 전월에 지적되었던 생활 규율 위반과 불규칙한 생활 습관이 눈에 띄게 호전되어,", "{month_prefix} 지난달과 비교할 때 공동체 규범을 수용하는 태도가 크게 성숙해지면서,"], "cores": ["이번 달에는 기상·취침·점호 등 일과 시간을 엄수하고 생활실 청소와 당번 역할도 책임감 있게 완수하는", "외출·휴대전화 제한 등 시설 규정을 차분히 수용하며 안정적이고 규칙적인 일상을 이어 가는"], "closers": ["뚜렷한 성장이 확인되고 있음.", "바람직한 변화가 자리 잡고 있음."]}, {"id": "ml_vio_3", "badge": "➖ 변화 없음", "label": "지난 회차와 비교해 아무런 변화 없이 규율 위반·정리 미흡 및 당번 회피가 그대로 반복됨", "openers": ["{month_prefix} 지난 회차 보고 이후 꾸준한 생활 지도를 실시하였으나 아무런 변화 없이,", "{month_prefix} 전월과 비교해 볼 때 기본 생활 습관과 규율 수용 태도에서 별다른 진전이 나타나지 않아,"], "cores": ["여전히 기상·점호 시간을 어기거나 공동 청소 및 당번 역할을 회피하려는 불성실한 모습이", "개인 사물함 정돈과 생활실 규칙 이행을 번거로워하며 통제에 수동적으로 일관하는 태도가"], "closers": ["전월과 동일하게 지속되고 있음.", "변화 없이 그대로 반복되고 있어 엄격한 지도가 필요함."]}, {"id": "ml_vio_4", "badge": "📉 오히려 악화", "label": "지난 회차보다 생활관 수칙 위반과 통제 불응이 오히려 심해지고 타 아동에게 당번을 떠넘김", "openers": ["{month_prefix} 지난 회차보다 생활관 규율을 무시하거나 통제에 반발하는 태도가 오히려 더욱 악화되어,", "{month_prefix} 전월에 비해 단체 생활의 규칙을 어기는 빈도가 높아지고 생활 태도가 한층 불성실해지면서,"], "cores": ["야간 취침 시간 소란이나 일과 이탈 등 규율 위반을 반복하고 자신의 당번 역할을 타 아동에게 강압적으로 떠넘기는", "담당 교사의 정당한 생활 지도에 노골적인 불만을 표하며 공동체 질서를 어지럽히는 행동이"], "closers": ["이전 달보다 심화되고 있어 일관된 상벌 적용과 집중 지도가 시급함.", "오히려 악화된 것으로 확인되고 있음."]}]}, "general_life": {"detectedLabel": "전월 대비 생활관 규율·일상생활 일반 변화 선택", "keywords": [], "options": [{"id": "ml_gen_1", "badge": "📈 자율성 향상", "label": "전월보다 교사의 독려 없이도 스스로 일과 시간과 위생·주변 정리를 챙기는 자율성이 높아짐", "openers": ["{month_prefix} 지난달에 비해 시설 일과 흐름이 완전히 몸에 배면서 자기관리 역량이 한층 향상되어,", "{month_prefix} 전월보다 일상생활을 스스로 챙기는 자율성과 책임감이 더욱 높아져,"], "cores": ["교사의 별도 지시가 없어도 침구 정리와 개인 위생, 공동 당번 역할을 모범적으로 완수하는", "타율적인 규율 준수를 넘어 스스로 시간을 관리하고 주변 아동을 돕는"], "closers": ["성숙한 생활 태도가 확인되고 있음.", "긍정적인 성장이 관찰되고 있음."]}, {"id": "ml_gen_2", "badge": "➖ 변화 없음", "label": "지난 회차와 비교해 뚜렷한 변화 없이 교사의 안내가 있을 때만 수동적으로 일과를 따름", "openers": ["{month_prefix} 지난 회차 보고 시점과 비교할 때 일상생활 태도에서 두드러진 변화는 없으며,", "{month_prefix} 한 달간 이전 회차와 대체로 동일한 수준의 생활 습관과 규율 준수 양상을 보이며,"], "cores": ["교사의 안내와 점검이 있을 때는 규칙을 따르나 스스로 주변을 정돈하는 자율성은 여전히 부족한 모습이", "기본 일과는 유지하고 있으나 자기관리 습관 면에서 뚜렷한 진전 없이 기존의 모습을 이어 가는 경향이"], "closers": ["전월과 유사하게 지속되고 있음.", "그대로 관찰되고 있음."]}, {"id": "ml_gen_3", "badge": "📉 오히려 악화", "label": "지난 회차까지는 무난히 일과를 따랐으나 이번 달 들어 생활 리듬이 흐트러지고 규칙 준수가 느슨해짐", "openers": ["{month_prefix} 지난 회차까지는 비교적 안정적으로 일과와 규율을 따랐으나 이번 달 들어 태도가 오히려 좋지 않아져,", "{month_prefix} 전월에 비해 시설 생활의 무료함과 피로감을 호소하며 생활 리듬이 흐트러지면서,"], "cores": ["아침 기상이나 일과 전환 시간에 굼뜬 모습을 보이고 주변 정리정돈과 당번 역할을 소홀히 하는", "정해진 생활 수칙 이행에 기복을 보이며 교사의 지도에 수동적으로 반응하는"], "closers": ["모습이 늘어나 생활 습관 재점검이 필요함.", "양상이 확인되어 세심한 독려가 요구됨."]}]}}, "trait": {"anger_denial": {"detectedLabel": "전월 감지: 분노·충동 조절 어려움 및 비행 합리화·죄책감 부족", "keywords": ["분노를 폭발", "적대감", "탓으로 돌리며", "합리화", "죄책감이", "무용담", "냉소적"], "options": [{"id": "mt_ang_1", "badge": "🌱 소폭 변화", "label": "감정 폭발 빈도가 전월보다 줄고 면담 시 남 탓을 줄이며 자신의 과오를 일부 인정하기 시작함", "openers": ["{month_prefix} 지난달까지 강하게 나타나던 적대감과 비행 합리화 태도가 정기 상담을 통해 조금씩 완화되며,", "{month_prefix} 전월에는 사소한 자극에도 분노를 표출하거나 책임을 외부로 돌렸으나 이번 달 들어서는,"], "cores": ["감정이 격해질 때 호흡을 가다듬으려 노력하고 면담 시 자신의 잘못된 선택을 일부 인정하기 시작하는", "과거 비행을 무용담처럼 말하던 태도를 줄이고 교사의 조언을 경청하려는"], "closers": ["의미 있는 내면의 변화가 관찰되고 있음.", "초기 단계의 성찰적 태도가 확인되고 있음."]}, {"id": "mt_ang_2", "badge": "📈 뚜렷한 성찰", "label": "방어적 합리화와 충동성을 극복하고 과거 비행을 깊이 반성하며 재비행 방지 의지를 확립함", "openers": ["{month_prefix} 전월에 보이던 감정 기복과 방어적인 비행 합리화 태도에서 뚜렷한 성장을 보여,", "{month_prefix} 지난달에 비해 정서적 안정감과 자기성찰 능력이 크게 향상되면서,"], "cores": ["자신의 지난 과오가 피해자와 가족에게 미친 영향을 진지하게 돌아보고 재비행하지 않겠다는 확고한 의지를 표현하는", "순간적인 충동을 스스로 다스리며 퇴소 후 건전한 자립과 사회 복귀를 성실히 준비하는"], "closers": ["괄목할 만한 변화가 확인되고 있음.", "성숙한 태도가 자리 잡고 있음."]}, {"id": "mt_ang_3", "badge": "➖ 변화 없음", "label": "지난 회차와 비교해 아무런 변화 없이 분노 조절 어려움과 비행 합리화·냉소적 태도가 지속됨", "openers": ["{month_prefix} 지난 회차 이후 지속적인 심리 상담과 인성 교육을 진행하였으나 아무런 변화 없이,", "{month_prefix} 전월 보고 시점과 비교할 때 정서 조절 및 비행 성찰 면에서 별다른 진전이 나타나지 않아,"], "cores": ["여전히 사소한 자극에 쉽게 흥분하고 자신의 과오를 주변 상황이나 타 아동 탓으로 돌리며 합리화하는 모습이", "과거 비행에 대한 진지한 죄책감 없이 교정 프로그램에 냉소적이고 방어적인 태도로 일관하는 양상이"], "closers": ["전월과 동일하게 지속되고 있음.", "변화 없이 그대로 관찰되어 집중적인 치료·교정 개입이 요구됨."]}, {"id": "mt_ang_4", "badge": "📉 오히려 악화", "label": "지난 회차보다 정서적 불안정과 충동성·적대감이 오히려 심해지고 상담 및 교정 교육을 거부함", "openers": ["{month_prefix} 지난 회차보다 내면의 분노와 성인에 대한 적대감이 오히려 더욱 악화되어,", "{month_prefix} 전월에 비해 감정 기복과 충동성이 한층 심해지면서,"], "cores": ["교사의 면담이나 상담 참여 자체를 강하게 거부하고 욕구 불만 시 파괴적이거나 위협적인 감정을 분출하는", "처분에 대한 억울함과 반사회적 인식을 노골적으로 드러내며 재비행 위험성이 높아지는"], "closers": ["악화된 양상이 확인되어 전문적인 정신건강·심리 치료 연계가 시급함.", "모습이 오히려 심화되고 있음."]}]}, "general_trait": {"detectedLabel": "전월 대비 정서·성찰·자립 의지 일반 변화 선택", "keywords": [], "options": [{"id": "mt_gen_1", "badge": "📈 자립 구체화", "label": "전월보다 정서적 안정감이 깊어지고 자격증 취득 등 퇴소 후 자립·진로 계획을 구체적으로 실천함", "openers": ["{month_prefix} 지난달에 비해 정서적 안정감과 자기효능감이 한층 탄탄해지면서,", "{month_prefix} 전월보다 과거에 대한 성찰이 실제 행동 변화와 진로 준비로 자연스럽게 이어져,"], "cores": ["자격증 취득과 직업훈련을 통해 퇴소 후 건전한 자립 계획을 구체화하고 성실히 실천해 나가는", "상담 내용을 일상 속에서 꾸준히 실천하며 건강한 사회 복귀 동기를 다져 나가는"], "closers": ["긍정적인 성장이 확인되고 있음.", "바람직한 변화가 관찰되고 있음."]}, {"id": "mt_gen_2", "badge": "➖ 변화 없음", "label": "지난 회차와 비교해 뚜렷한 변화 없이 상담에는 참여하나 행동 변화로의 내면화는 제자리걸음임", "openers": ["{month_prefix} 지난 회차 보고 시점과 비교할 때 정서 상태 및 성찰 태도에서 특별한 변화는 없으며,", "{month_prefix} 한 달간 이전 회차와 대체로 유사한 정서적 반응과 상담 태도를 이어 가며,"], "cores": ["상담 시간에는 반성과 다짐을 이야기하나 이를 실제 생활 속 자기통제와 행동 변화로 연결하는 데에는 진전이 없는 모습이", "퇴소 후 진로나 자립 계획에 대해 여전히 막연한 태도를 보이며 구체적인 실천 의지가 부족한 경향이"], "closers": ["전월과 동일하게 관찰되고 있음.", "변화 없이 이어지고 있음."]}, {"id": "mt_gen_3", "badge": "📉 오히려 악화", "label": "지난 회차보다 감정 기복과 불안감이 오히려 커지고 성찰 및 자립 의지가 위축·후퇴함", "openers": ["{month_prefix} 지난 회차까지는 비교적 안정된 정서와 반성적 태도를 보였으나 이번 달 들어 오히려 좋지 않아져,", "{month_prefix} 전월에 비해 퇴소 후 환경에 대한 불안감이나 개인적 스트레스가 가중되면서,"], "cores": ["감정 기복과 예민함이 다시 늘어나고 그동안 다잡았던 성찰 및 자립 의지가 눈에 띄게 약화되는", "상담 시간에 방어적이거나 무기력한 태도로 돌아서며 순간적인 충동 조절에 어려움을 겪는"], "closers": ["후퇴된 양상이 관찰되어 집중적인 정서적 지지와 상담 개입이 필요함.", "모습으로 악화되고 있는 것이 확인됨."]}]}}};
+    const MONTH_PREFIXES = {"none": ["이번 회차 관찰에서는", "최근 한 달간의 생활을 살펴보면", "이번 달 들어서는"], "1": ["입소 1개월차인 현재", "위탁 첫 달 적응 과정을 거치며", "입소 후 한 달이 경과한 현시점에서"], "2": ["입소 2개월차에 접어들며", "생활 2개월차를 맞이하여", "위탁 2개월차에 들어서면서"], "3": ["위탁 중반부인 3개월차에 들어서며", "생활 3개월차를 지나며", "위탁 3개월차에 접어든 현재"], "4": ["위탁 4개월차에 접어들어", "중반기를 넘어 4개월차를 맞이하며", "생활 4개월차에 이르러"], "5": ["퇴소를 앞둔 5개월차 시점에서", "위탁 후반기(5개월차)에 이르러", "생활 5개월차를 보내며"], "6": ["6개월 위탁 과정을 마무리하는 현시점에서", "퇴소를 앞둔 6개월차 종합 시점에서", "6개월간의 위탁 생활을 마치며"]};
+
+    let activeCategoryId = "peer";
+    let currentMonthStage = "none"; // "none", "1".."6"
+    let selections = {"peer": {"peer_overall": "p1_1", "peer_tendency": "p2_1", "peer_change": "p3_1", "peer_conclusion": "p4_1"}, "class": {"class_overall": "c1_1", "class_preference": "c2_1", "class_behavior": null, "class_conclusion": "c3_1"}, "life": {"life_overall": "l1_1", "life_detail": "l2_1", "life_conclusion": "l3_1"}, "trait": {"trait_temperament": "t1_1", "trait_reflection": "t2_1", "trait_support": "t3_1"}};
+    let customTexts = {};
+    let savedRecords = [];
+
+    // 전월 대비 성장/변화 선택 상태 (catId -> option object)
+    let selectedGrowthOption = {
+      peer: null,
+      class: null,
+      life: null,
+      trait: null
+    };
+    let generatedGrowthSentence = {
+      peer: "",
+      class: "",
+      life: "",
+      trait: ""
+    };
+    let detectedThemes = {
+      peer: "distance",
+      class: "thinking_gap",
+      life: "general_life",
+      trait: "general_trait"
+    };
+
+    let generatedStepSentences = {};
+    let useOriginalBaseline = true;
+
+    const CONNECTORS_STEP3 = ["", "특히 ", "아울러 ", "무엇보다 ", "한편 "];
+    const CONNECTORS_STEP4 = ["", "종합적으로 ", "전반적으로 볼 때 ", "이에 따라 ", "결과적으로 "];
+
+    function pickRandom(arr, excludeVal) {
+      if (!arr || arr.length === 0) return "";
+      if (arr.length === 1) return arr[0];
+      const candidates = arr.filter(x => x !== excludeVal);
+      const pool = candidates.length > 0 ? candidates : arr;
+      return pool[Math.floor(Math.random() * pool.length)];
+    }
+
+    function synthesizeGrowthSentence(opt) {
+      if (!opt) return "";
+      const prefixes = MONTH_PREFIXES[currentMonthStage] || MONTH_PREFIXES["none"];
+      const mPrefix = pickRandom(prefixes);
+      const o = pickRandom(opt.openers).replace("{month_prefix}", mPrefix);
+      const c = pickRandom(opt.cores);
+      const cl = pickRandom(opt.closers);
+      return `${o} ${c} ${cl}`.replace(/\s+/g, " ").trim();
+    }
+
+    function analyzePreviousReport(showNotification) {
+      const text = document.getElementById("prevReportInput").value.trim();
+
+      if (!text) {
+        detectedThemes.peer = "distance";
+        detectedThemes.class = "thinking_gap";
+      } else {
+        // Peer detection
+        if (MONTHLY_PROGRESSION_DB.peer.violence.keywords.some(k => text.includes(k))) {
+          detectedThemes.peer = "violence";
+        } else if (MONTHLY_PROGRESSION_DB.peer.isolation.keywords.some(k => text.includes(k))) {
+          detectedThemes.peer = "isolation";
+        } else if (MONTHLY_PROGRESSION_DB.peer.distance.keywords.some(k => text.includes(k))) {
+          detectedThemes.peer = "distance";
+        } else {
+          detectedThemes.peer = "general_peer";
+        }
+
+        // Class detection
+        if (MONTHLY_PROGRESSION_DB.class.insincere_disrupt.keywords.some(k => text.includes(k))) {
+          detectedThemes.class = "insincere_disrupt";
+        } else if (MONTHLY_PROGRESSION_DB.class.solitary_focus.keywords.some(k => text.includes(k))) {
+          detectedThemes.class = "solitary_focus";
+        } else if (MONTHLY_PROGRESSION_DB.class.thinking_gap.keywords.some(k => text.includes(k))) {
+          detectedThemes.class = "thinking_gap";
+        } else {
+          detectedThemes.class = "general_class";
+        }
+
+        // Life detection
+        if (MONTHLY_PROGRESSION_DB.life.rule_violation.keywords.some(k => text.includes(k))) {
+          detectedThemes.life = "rule_violation";
+        } else {
+          detectedThemes.life = "general_life";
+        }
+
+        // Trait detection
+        if (MONTHLY_PROGRESSION_DB.trait.anger_denial.keywords.some(k => text.includes(k))) {
+          detectedThemes.trait = "anger_denial";
+        } else {
+          detectedThemes.trait = "general_trait";
+        }
+      }
+
+      renderGrowthBox();
+      if (showNotification) {
+        showToast("🔍 지난 보고서 내용을 분석하여 이번 달 성장·변화 선택지를 맞춤 구성했습니다!");
+      }
+    }
+
+    function renderGrowthBox() {
+      const box = document.getElementById("prevGrowthBox");
+      box.innerHTML = "";
+
+      const sections = [
+        {
+          catId: "peer",
+          title: "또래·공동체 관계",
+          themeKey: detectedThemes.peer,
+          genKey: "general_peer"
+        },
+        {
+          catId: "class",
+          title: "수업·직업훈련",
+          themeKey: detectedThemes.class,
+          genKey: "general_class"
+        },
+        {
+          catId: "life",
+          title: "생활관 규율·일상",
+          themeKey: detectedThemes.life || "general_life",
+          genKey: "general_life"
+        },
+        {
+          catId: "trait",
+          title: "정서·성찰·자립",
+          themeKey: detectedThemes.trait || "general_trait",
+          genKey: "general_trait"
+        }
+      ];
+
+      sections.forEach(sec => {
+        const themeObj = MONTHLY_PROGRESSION_DB[sec.catId][sec.themeKey];
+        const generalObj = MONTHLY_PROGRESSION_DB[sec.catId][sec.genKey];
+
+        // Combine theme-specific options + general progression options (deduplicated)
+        const combinedOptions = [...themeObj.options];
+        if (sec.themeKey !== sec.genKey) {
+          generalObj.options.forEach(gOpt => {
+            if (!combinedOptions.some(o => o.id === gOpt.id)) {
+              combinedOptions.push(gOpt);
+            }
+          });
+        }
+
+        const group = document.createElement("div");
+        group.className = "growth-group";
+
+        const header = document.createElement("div");
+        header.className = "growth-group-header";
+        header.innerHTML = `
+          <span>${sec.title}</span>
+          <span class="detected-tag">${document.getElementById("prevReportInput").value.trim() ? themeObj.detectedLabel : "지난달 보고서를 입력하면 관련 선택지를 추천합니다."}</span>
+        `;
+        group.appendChild(header);
+
+        const wrap = document.createElement("div");
+        wrap.className = "chips-wrap";
+
+        combinedOptions.forEach(opt => {
+          const isSelected = selectedGrowthOption[sec.catId] && selectedGrowthOption[sec.catId].id === opt.id;
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "growth-chip" + (isSelected ? " selected" : "");
+          btn.innerHTML = `<span class="growth-badge">${opt.badge}</span><span>${opt.label}</span>`;
+          btn.addEventListener("click", () => {
+            if (isSelected) {
+              selectedGrowthOption[sec.catId] = null;
+              generatedGrowthSentence[sec.catId] = "";
+            } else {
+              selectedGrowthOption[sec.catId] = opt;
+              generatedGrowthSentence[sec.catId] = synthesizeGrowthSentence(opt);
+              const targetCat = CATEGORIES.find(c => c.id === sec.catId);
+              if (targetCat && !targetCat.enabled) {
+                targetCat.enabled = true;
+                renderSectionToggles();
+                renderTabs();
+              }
+              // 변화 없음(➖) 또는 오히려 악화(📉) 선택 시, 마지막 결론 문장이 "긍정적 변화 확인"으로 되어 있다면 모순되지 않게 보완 필요 결론으로 자동 연동
+              if (opt.badge.includes("변화 없음") || opt.badge.includes("악화")) {
+                if (sec.catId === "peer" && (selections.peer.peer_conclusion === "p4_1" || selections.peer.peer_conclusion === "p4_8")) {
+                  const targetConcl = sec.themeKey === "violence" ? "p4_4" : (sec.themeKey === "isolation" ? "p4_5" : "p4_3");
+                  selections.peer.peer_conclusion = targetConcl;
+                  const cStep = CATEGORIES[0].steps[3];
+                  const cOpt = cStep.options.find(o => o.id === targetConcl);
+                  if (cOpt) generatedStepSentences["peer_conclusion"] = synthesizeSentenceForOption(cOpt, 3, true);
+                  renderSteps();
+                } else if (sec.catId === "class" && selections.class.class_conclusion === "c3_4") {
+                  const targetConcl = sec.themeKey === "insincere_disrupt" ? "c3_5" : "c3_1";
+                  selections.class.class_conclusion = targetConcl;
+                  const cStep = CATEGORIES[1].steps[3];
+                  const cOpt = cStep.options.find(o => o.id === targetConcl);
+                  if (cOpt) generatedStepSentences["class_conclusion"] = synthesizeSentenceForOption(cOpt, 3, true);
+                  renderSteps();
+                }
+              }
+            }
+            renderGrowthBox();
+            generateReport(true);
+          });
+          wrap.appendChild(btn);
+        });
+
+        const select = document.createElement("select");
+        select.className = "growth-select";
+        select.setAttribute("aria-label", `${sec.title} 전월 대비 변화`);
+        const empty = document.createElement("option");
+        empty.value = "";
+        empty.textContent = "변화 선택 안 함";
+        select.appendChild(empty);
+        combinedOptions.forEach(opt => {
+          const option = document.createElement("option");
+          option.value = opt.id;
+          option.textContent = `${opt.badge.replace(/^[^가-힣]+/, "")} · ${opt.label}`;
+          select.appendChild(option);
+        });
+        const selected = selectedGrowthOption[sec.catId];
+        if (selected && !combinedOptions.some(opt => opt.id === selected.id)) {
+          const previous = document.createElement("option");
+          previous.value = selected.id;
+          previous.textContent = `기존 선택 · ${selected.label}`;
+          select.appendChild(previous);
+        }
+        select.value = selected ? selected.id : "";
+        select.addEventListener("change", () => {
+          if (select.value) {
+            wrap.children[combinedOptions.findIndex(opt => opt.id === select.value)].click();
+          } else if (selected) {
+            selectedGrowthOption[sec.catId] = null;
+            generatedGrowthSentence[sec.catId] = "";
+            renderGrowthBox();
+            generateReport(true);
+          }
+        });
+        group.appendChild(select);
+        if (selected && select.value) {
+          const description = document.createElement("p");
+          description.className = "growth-selection";
+          description.textContent = selected.label;
+          group.appendChild(description);
+        }
+        box.appendChild(group);
+      });
+    }
+
+    function synthesizeSentenceForOption(opt, stepIdx, forceNew) {
+      if (!forceNew && useOriginalBaseline && opt.original) {
+        return opt.original;
+      }
+      const prev = generatedStepSentences[opt.id] || "";
+      let attempt = 0;
+      let candidate = "";
+      while (attempt < 8) {
+        const o = pickRandom(opt.openers);
+        const c = pickRandom(opt.cores);
+        const cl = pickRandom(opt.closers);
+        let prefix = "";
+        if (forceNew && stepIdx === 2 && Math.random() < 0.45) {
+          prefix = pickRandom(CONNECTORS_STEP3.slice(1));
+        } else if (forceNew && stepIdx === 3 && Math.random() < 0.45) {
+          prefix = pickRandom(CONNECTORS_STEP4.slice(1));
+        }
+        candidate = `${prefix}${o} ${c} ${cl}`.replace(/\s+/g, " ").trim();
+        const dupWords = ["점차", "모습이", "모습을", "경향이", "태도가", "최근"];
+        const hasDup = dupWords.some(w => (o.includes(w) && c.includes(w)) || (c.includes(w) && cl.includes(w)) || (o.includes(w) && cl.includes(w)));
+        if (candidate !== prev && !hasDup) break;
+        attempt++;
+      }
+      generatedStepSentences[opt.id] = candidate;
+      return candidate;
+    }
+
+    function refreshAllStepSentences(forceNew) {
+      CATEGORIES.forEach(cat => {
+        cat.steps.forEach((step, idx) => {
+          const selId = selections[cat.id][step.id];
+          if (selId) {
+            const opt = step.options.find(o => o.id === selId);
+            if (opt) {
+              generatedStepSentences[step.id] = synthesizeSentenceForOption(opt, idx, forceNew);
+            }
+          } else {
+            generatedStepSentences[step.id] = "";
+          }
+        });
+      });
+      ["peer", "class", "life", "trait"].forEach(cid => {
+        if (selectedGrowthOption[cid]) {
+          generatedGrowthSentence[cid] = synthesizeGrowthSentence(selectedGrowthOption[cid]);
+        }
+      });
+    }
+
+    function rerollSingleStep(catId, stepId) {
+      useOriginalBaseline = false;
+      const cat = CATEGORIES.find(c => c.id === catId);
+      if (!cat) return;
+      const idx = cat.steps.findIndex(s => s.id === stepId);
+      if (idx === -1) return;
+      const step = cat.steps[idx];
+      const selId = selections[catId][stepId];
+      if (!selId) {
+        showToast("먼저 이 단계의 특성을 선택해 주세요.");
+        return;
+      }
+      const opt = step.options.find(o => o.id === selId);
+      if (opt) {
+        generatedStepSentences[stepId] = synthesizeSentenceForOption(opt, idx, true);
+        generateReport(true);
+        showToast(`${idx + 1}번 문장이 새로운 표현으로 변경되었습니다!`);
+      }
+    }
+
+    function rerollCategory(catId) {
+      useOriginalBaseline = false;
+      const cat = CATEGORIES.find(c => c.id === catId);
+      if (!cat) return;
+      cat.steps.forEach((step, idx) => {
+        const selId = selections[catId][step.id];
+        if (selId) {
+          const opt = step.options.find(o => o.id === selId);
+          if (opt) {
+            generatedStepSentences[step.id] = synthesizeSentenceForOption(opt, idx, true);
+          }
+        }
+      });
+      if (selectedGrowthOption[catId]) {
+        generatedGrowthSentence[catId] = synthesizeGrowthSentence(selectedGrowthOption[catId]);
+      }
+      generateReport(true);
+      showToast(`[${cat.shortName}] 영역 문장이 새로운 느낌으로 재조합되었습니다!`);
+    }
+
+    function rerollAll() {
+      useOriginalBaseline = false;
+      refreshAllStepSentences(true);
+      generateReport(true);
+      showToast("✨ 선택된 특성과 월별 성장을 유지하고 전체 문장을 새로운 표현으로 다시 뽑았습니다!");
+    }
+
+    function renderTabs() {
+      const container = document.getElementById("categoryTabs");
+      container.innerHTML = "";
+      CATEGORIES.forEach(cat => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "tab-btn" + (cat.id === activeCategoryId ? " active" : "");
+        const selectedCount = Object.values(selections[cat.id] || {}).filter(Boolean).length;
+        const stateBadge = cat.enabled ? "포함됨" : "제외됨";
+        btn.innerHTML = `
+          <div class="tab-top-row">
+            <span>${cat.shortName}</span>
+            <span class="tab-count">${selectedCount}/${cat.steps.length}</span>
+          </div>
+          <span style="font-size:0.72rem; color:${cat.enabled ? 'var(--accent)' : 'var(--text-muted)'}; font-weight:600;">
+            ● 보고서 ${stateBadge}
+          </span>
+        `;
+        btn.addEventListener("click", () => {
+          activeCategoryId = cat.id;
+          renderTabs();
+          renderSteps();
+          updateCurrentCatPreview();
+        });
+        container.appendChild(btn);
+      });
+    }
+
+    function renderSectionToggles() {
+      const container = document.getElementById("sectionToggles");
+      container.innerHTML = "<span style='font-size:0.78rem; color:var(--text-muted); font-weight:700; width:100%; margin-bottom:2px;'>보고서에 포함할 영역 체크:</span>";
+      CATEGORIES.forEach(cat => {
+        const label = document.createElement("label");
+        label.className = "toggle-label";
+        const chk = document.createElement("input");
+        chk.type = "checkbox";
+        chk.checked = cat.enabled;
+        chk.addEventListener("change", (e) => {
+          cat.enabled = e.target.checked;
+          renderTabs();
+          generateReport(false);
+        });
+        label.appendChild(chk);
+        label.appendChild(document.createTextNode(cat.shortName));
+        container.appendChild(label);
+      });
+    }
+
+    function renderSteps() {
+      const container = document.getElementById("stepsContainer");
+      container.innerHTML = "";
+      const cat = CATEGORIES.find(c => c.id === activeCategoryId);
+      if (!cat) return;
+
+      document.getElementById("activeCatStatus").textContent = `[${cat.name}]`;
+
+      cat.steps.forEach((step, idx) => {
+        const group = document.createElement("div");
+        group.className = "step-group";
+
+        const currentSel = selections[cat.id][step.id];
+
+        const headerDiv = document.createElement("div");
+        headerDiv.className = "step-header";
+
+        const titleRow = document.createElement("div");
+        titleRow.className = "step-title-row";
+        titleRow.innerHTML = `
+          <div class="step-title">
+            <span class="step-num">${idx + 1}</span>
+            <span>${step.title}</span>
+          </div>
+        `;
+
+        const miniRerollBtn = document.createElement("button");
+        miniRerollBtn.type = "button";
+        miniRerollBtn.className = "btn-mini-reroll";
+        miniRerollBtn.textContent = "🔄 이 문장만 다른 표현으로";
+        miniRerollBtn.addEventListener("click", () => {
+          rerollSingleStep(cat.id, step.id);
+        });
+        titleRow.appendChild(miniRerollBtn);
+
+        const hintDiv = document.createElement("div");
+        hintDiv.className = "step-hint";
+        hintDiv.textContent = step.hint;
+
+        headerDiv.appendChild(titleRow);
+        headerDiv.appendChild(hintDiv);
+        group.appendChild(headerDiv);
+
+        const chipsWrap = document.createElement("div");
+        chipsWrap.className = "chips-wrap";
+
+        step.options.forEach(opt => {
+          const chip = document.createElement("button");
+          chip.type = "button";
+          chip.className = "chip" + (opt.label.startsWith("⚠️") ? " chip-warn" : "") + (currentSel === opt.id ? " selected" : "");
+          chip.textContent = opt.label;
+          chip.addEventListener("click", () => {
+            if (selections[cat.id][step.id] === opt.id) {
+              selections[cat.id][step.id] = null;
+              generatedStepSentences[step.id] = "";
+            } else {
+              selections[cat.id][step.id] = opt.id;
+              generatedStepSentences[step.id] = synthesizeSentenceForOption(opt, idx, !useOriginalBaseline);
+              if (!cat.enabled) {
+                cat.enabled = true;
+                renderSectionToggles();
+              }
+            }
+            renderTabs();
+            renderSteps();
+            generateReport(false);
+          });
+          chipsWrap.appendChild(chip);
+        });
+
+        const select = document.createElement("select");
+        select.className = "step-select";
+        select.setAttribute("aria-label", step.title);
+        const empty = document.createElement("option");
+        empty.value = "";
+        empty.textContent = "선택 안 함";
+        select.appendChild(empty);
+        step.options.forEach(opt => {
+          const option = document.createElement("option");
+          option.value = opt.id;
+          option.textContent = opt.label.replace(/^⚠️\s*/, "");
+          select.appendChild(option);
+        });
+        select.value = currentSel || "";
+        select.addEventListener("change", () => {
+          const target = Array.from(chipsWrap.children).find(chip => chip.textContent === step.options.find(opt => opt.id === select.value)?.label);
+          if (target) target.click();
+          else if (currentSel) chipsWrap.querySelector(".selected").click();
+        });
+        group.appendChild(select);
+
+        const customRow = document.createElement("div");
+        customRow.className = "custom-input-row";
+        const input = document.createElement("input");
+        input.type = "text";
+        input.placeholder = "➕ 이 단계에 직접 덧붙일 개별 관찰 문장 입력 (선택)";
+        input.value = customTexts[step.id] || "";
+        input.addEventListener("input", (e) => {
+          customTexts[step.id] = e.target.value;
+          if (!cat.enabled && e.target.value.trim()) {
+            cat.enabled = true;
+            renderSectionToggles();
+          }
+          generateReport(false);
+        });
+        customRow.appendChild(input);
+        group.appendChild(customRow);
+
+        container.appendChild(group);
+      });
+    }
+
+    function convertEnding(sentence, style) {
+      if (style === "report") return sentence;
+      let s = sentence;
+      if (style === "plain") {
+        s = s
+          .replace(/관찰되고 있음\./g, "관찰된다.")
+          .replace(/확인되고 있음\./g, "확인된다.")
+          .replace(/늘어나고 있음\./g, "늘어나고 있다.")
+          .replace(/이어 가고 있음\./g, "이어 가고 있다.")
+          .replace(/참여하고 있음\./g, "참여하고 있다.")
+          .replace(/보이고 있음\./g, "보이고 있다.")
+          .replace(/지내고 있음\./g, "지내고 있다.")
+          .replace(/나타나고 있음\./g, "나타나고 있다.")
+          .replace(/증가하고 있음\./g, "증가하고 있다.")
+          .replace(/변화하고 있음\./g, "변화하고 있다.")
+          .replace(/발전하고 있음\./g, "발전하고 있다.")
+          .replace(/유지하고 있음\./g, "유지하고 있다.")
+          .replace(/형성하고 있음\./g, "형성하고 있다.")
+          .replace(/보여주고 있음\./g, "보여주고 있다.")
+          .replace(/이어지고 있음\./g, "이어지고 있다.")
+          .replace(/지속되고 있음\./g, "지속되고 있다.")
+          .replace(/임하고 있음\./g, "임하고 있다.")
+          .replace(/돋보이고 있음\./g, "돋보이고 있다.")
+          .replace(/향상되고 있음\./g, "향상되고 있다.")
+          .replace(/자리 잡고 있음\./g, "자리 잡고 있다.")
+          .replace(/시작되고 있음\./g, "시작되고 있다.")
+          .replace(/시작함\./g, "시작했다.")
+          .replace(/기대되고 있음\./g, "기대되고 있다.")
+          .replace(/경향이 있음\./g, "경향이 있다.")
+          .replace(/필요가 있음\./g, "필요가 있다.")
+          .replace(/필요함\./g, "필요하다.")
+          .replace(/시급함\./g, "시급하다.")
+          .replace(/요구됨\./g, "요구된다.")
+          .replace(/관찰됨\./g, "관찰된다.")
+          .replace(/확인됨\./g, "확인된다.")
+          .replace(/기대됨\./g, "기대된다.")
+          .replace(/전망됨\./g, "전망된다.")
+          .replace(/보임\./g, "보인다.")
+          .replace(/편임\./g, "편이다.")
+          .replace(/있음\./g, "있다.")
+          .replace(/나타남\./g, "나타난다.")
+          .replace(/되어야 함\./g, "되어야 한다.")
+          .replace(/기도 함\./g, "기도 한다.");
+      } else if (style === "polite") {
+        s = s
+          .replace(/관찰되고 있음\./g, "관찰되고 있습니다.")
+          .replace(/확인되고 있음\./g, "확인되고 있습니다.")
+          .replace(/늘어나고 있음\./g, "늘어나고 있습니다.")
+          .replace(/이어 가고 있음\./g, "이어 가고 있습니다.")
+          .replace(/참여하고 있음\./g, "참여하고 있습니다.")
+          .replace(/보이고 있음\./g, "보이고 있습니다.")
+          .replace(/지내고 있음\./g, "지내고 있습니다.")
+          .replace(/나타나고 있음\./g, "나타나고 있습니다.")
+          .replace(/증가하고 있음\./g, "증가하고 있습니다.")
+          .replace(/변화하고 있음\./g, "변화하고 있습니다.")
+          .replace(/발전하고 있음\./g, "발전하고 있습니다.")
+          .replace(/유지하고 있음\./g, "유지하고 있습니다.")
+          .replace(/형성하고 있음\./g, "형성하고 있습니다.")
+          .replace(/보여주고 있음\./g, "보여주고 있습니다.")
+          .replace(/이어지고 있음\./g, "이어지고 있습니다.")
+          .replace(/지속되고 있음\./g, "지속되고 있습니다.")
+          .replace(/임하고 있음\./g, "임하고 있습니다.")
+          .replace(/돋보이고 있음\./g, "돋보이고 있습니다.")
+          .replace(/향상되고 있음\./g, "향상되고 있습니다.")
+          .replace(/자리 잡고 있음\./g, "자리 잡고 있습니다.")
+          .replace(/시작되고 있음\./g, "시작되고 있습니다.")
+          .replace(/시작함\./g, "시작했습니다.")
+          .replace(/기대되고 있음\./g, "기대되고 있습니다.")
+          .replace(/경향이 있음\./g, "경향이 있습니다.")
+          .replace(/필요가 있음\./g, "필요가 있습니다.")
+          .replace(/필요함\./g, "필요합니다.")
+          .replace(/시급함\./g, "시급합니다.")
+          .replace(/요구됨\./g, "요구됩니다.")
+          .replace(/관찰됨\./g, "관찰됩니다.")
+          .replace(/확인됨\./g, "확인됩니다.")
+          .replace(/기대됨\./g, "기대됩니다.")
+          .replace(/전망됨\./g, "전망됩니다.")
+          .replace(/보임\./g, "보입니다.")
+          .replace(/편임\./g, "편입니다.")
+          .replace(/있음\./g, "있습니다.")
+          .replace(/나타남\./g, "나타납니다.")
+          .replace(/되어야 함\./g, "되어야 합니다.")
+          .replace(/기도 함\./g, "기도 합니다.");
+      }
+      return s;
+    }
+
+    function applyFlowMode(sentences, flowMode) {
+      if (flowMode !== "connected" || sentences.length < 2) {
+        return sentences.join(" ");
+      }
+      const s0 = sentences[0]
+        .replace(/관찰되고 있음\.$/, "관찰되고 있으며,")
+        .replace(/확인되고 있음\.$/, "확인되고 있으나,")
+        .replace(/보이고 있음\.$/, "보이고 있으나,")
+        .replace(/나타나고 있음\.$/, "나타나고 있으며,")
+        .replace(/관찰됨\.$/, "관찰되나,");
+      const rest = sentences.slice(1);
+      return [s0, ...rest].join(" ");
+    }
+
+    function previousParagraphForCategory(text, catId) {
+      const patterns = {
+        peer: /또래|공동체|대인관계/,
+        class: /수업|직업훈련|자격증|학습|실습/,
+        life: /생활관|생활규칙|일상생활|기상|취침/,
+        trait: /정서|성찰|자립|상담/
+      };
+      const paragraphs = text.split(/\n\s*\n+|\n(?=\s*[▪•])/).map(p => p.trim().replace(/^[▪•]\s*/, "")).filter(Boolean);
+      const matches = paragraphs.filter(p => {
+        const firstSentence = p.split(/[.!?。\n]/, 1)[0].replace(/^\[[^\]]+\]\s*/, "");
+        const categories = Object.keys(patterns).filter(id => patterns[id].test(firstSentence));
+        return categories.length === 1 && categories[0] === catId;
+      });
+      return matches.length === 1 ? matches[0] : "";
+    }
+
+    function buildParagraphForCategory(cat) {
+      const bulletStyle = document.getElementById("bulletStyle").value;
+      const endingStyle = document.getElementById("endingStyle").value;
+      const flowMode = document.getElementById("flowMode").value;
+
+      const rawSentences = [];
+      cat.steps.forEach((step, idx) => {
+        const selId = selections[cat.id][step.id];
+        // 또래 관계의 3단계(입소 초기 대비 변화)는 전월 대비 성장·변화 칩이 선택된 경우 그 문장으로 자연스럽게 대체하여 문단 호흡을 깔끔하게 유지
+        if (cat.id === "peer" && step.id === "peer_change" && selectedGrowthOption.peer) {
+          if (!generatedGrowthSentence.peer) {
+            generatedGrowthSentence.peer = synthesizeGrowthSentence(selectedGrowthOption.peer);
+          }
+          rawSentences.push(generatedGrowthSentence.peer);
+        } else if (selId) {
+          const opt = step.options.find(o => o.id === selId);
+          if (opt) {
+            if (!generatedStepSentences[step.id]) {
+              generatedStepSentences[step.id] = synthesizeSentenceForOption(opt, idx, !useOriginalBaseline);
+            }
+            rawSentences.push(generatedStepSentences[step.id]);
+          }
+        }
+        if (customTexts[step.id] && customTexts[step.id].trim()) {
+          rawSentences.push(customTexts[step.id].trim());
+        }
+        // 수업·직업훈련 영역은 마지막 결론 단계 직전에 전월 대비 성장·변화 문장을 자연스럽게 연결
+        if ((cat.id === "class" || cat.id === "life" || cat.id === "trait") && idx === 1 && selectedGrowthOption[cat.id]) {
+          if (!generatedGrowthSentence[cat.id]) {
+            generatedGrowthSentence[cat.id] = synthesizeGrowthSentence(selectedGrowthOption[cat.id]);
+          }
+          rawSentences.push(generatedGrowthSentence[cat.id]);
+        }
+      });
+
+      if (rawSentences.length === 0 && selectedGrowthOption[cat.id]) {
+        if (!generatedGrowthSentence[cat.id]) {
+          generatedGrowthSentence[cat.id] = synthesizeGrowthSentence(selectedGrowthOption[cat.id]);
+        }
+        rawSentences.push(generatedGrowthSentence[cat.id]);
+      }
+
+      if (rawSentences.length === 0) return "";
+
+      const flowCombined = applyFlowMode(rawSentences, flowMode);
+      let converted = convertEnding(flowCombined, endingStyle);
+      const hasCurrentDetails = cat.steps.some(step => selections[cat.id][step.id] || (customTexts[step.id] || "").trim());
+      if (selectedGrowthOption[cat.id] && !hasCurrentDetails) {
+        const previous = previousParagraphForCategory(document.getElementById("prevReportInput").value, cat.id);
+        if (previous) converted = `지난달 보고서에는 “${previous}”이라고 기록되어 있음. ${converted}`;
+      }
+
+      let prefix = bulletStyle;
+      if (bulletStyle === "[영역명] ") {
+        prefix = `[${cat.shortName}] `;
+      }
+      return prefix + converted;
+    }
+
+    function updateCurrentCatPreview() {
+      const cat = CATEGORIES.find(c => c.id === activeCategoryId);
+      if (!cat) return;
+      document.getElementById("currentCatPreviewTitle").textContent = `💬 [${cat.shortName}] 현재 조합된 문단`;
+      const para = buildParagraphForCategory(cat);
+      document.getElementById("currentCatPreviewText").textContent = para || "위 단계별 특성 버튼을 선택하면 이 영역의 보고서 문장이 즉시 만들어집니다.";
+    }
+
+    function generateReport(flashEffect) {
+      const childName = document.getElementById("childName").value.trim();
+      const paragraphs = [];
+
+      CATEGORIES.forEach(cat => {
+        if (!cat.enabled) return;
+        const para = buildParagraphForCategory(cat);
+        if (para) paragraphs.push(para);
+      });
+
+      let headerMeta = [];
+      if (childName) headerMeta.push(`대상 아동: ${childName}`);
+      if (currentMonthStage !== "none") headerMeta.push(`위탁 ${currentMonthStage}개월차 정기 보고서`);
+
+      let finalOutput = paragraphs.join("\n\n");
+      if (headerMeta.length > 0) {
+        finalOutput = `[${headerMeta.join(" | ")}]\n` + finalOutput;
+      }
+
+      const outBox = document.getElementById("reportOutput");
+      outBox.value = finalOutput;
+      if (flashEffect) {
+        outBox.classList.add("flash");
+        setTimeout(() => outBox.classList.remove("flash"), 260);
+      }
+      updateCharCount();
+      updateCurrentCatPreview();
+
+      const snippetEl = document.getElementById("mobileBarSnippet");
+      const statusEl = document.getElementById("mobileBarStatus");
+      if (finalOutput.trim()) {
+        statusEl.textContent = `보고서 ${paragraphs.length}개 문단 (${finalOutput.length}자) · [🔄 새 표현]으로 매번 변주 가능`;
+        snippetEl.textContent = finalOutput.replace(/\n+/g, " ");
+      } else {
+        statusEl.textContent = "특성을 선택해 주세요";
+        snippetEl.textContent = "선택된 문장이 없습니다.";
+      }
+    }
+
+    function updateCharCount() {
+      const text = document.getElementById("reportOutput").value;
+      document.getElementById("charCount").textContent = `${text.length}자 (공백 포함)`;
+    }
+
+    function loadUserSample() {
+      useOriginalBaseline = true;
+      currentMonthStage = "none";
+      document.querySelectorAll(".month-pill").forEach(b => {
+        b.classList.toggle("active", b.getAttribute("data-month") === "none");
+      });
+      selectedGrowthOption = { peer: null, class: null };
+      generatedGrowthSentence = { peer: "", class: "" };
+      CATEGORIES.forEach(cat => {
+        cat.enabled = (cat.id === "peer" || cat.id === "class");
+      });
+      selections.peer = {
+        peer_overall: "p1_1",
+        peer_tendency: "p2_1",
+        peer_change: "p3_1",
+        peer_conclusion: "p4_1"
+      };
+      selections.class = {
+        class_overall: "c1_1",
+        class_preference: "c2_1",
+        class_behavior: null,
+        class_conclusion: "c3_1"
+      };
+      customTexts = {};
+      document.getElementById("bulletStyle").value = "▪ ";
+      document.getElementById("endingStyle").value = "report";
+      document.getElementById("flowMode").value = "standard";
+      refreshAllStepSentences(false);
+      renderGrowthBox();
+      renderTabs();
+      renderSectionToggles();
+      renderSteps();
+      generateReport(true);
+      showToast("질문하셨던 원본 예시문 그대로 복원되었습니다.");
+    }
+
+    function randomizeSelection() {
+      useOriginalBaseline = false;
+      CATEGORIES.forEach(cat => {
+        if (!cat.enabled) return;
+        cat.steps.forEach((step, idx) => {
+          const randOpt = step.options[Math.floor(Math.random() * step.options.length)];
+          selections[cat.id][step.id] = randOpt.id;
+          generatedStepSentences[step.id] = synthesizeSentenceForOption(randOpt, idx, true);
+        });
+      });
+      renderTabs();
+      renderSteps();
+      generateReport(true);
+      showToast("추천 특성과 새로운 문장 표현이 조합되었습니다.");
+    }
+
+    function resetAll() {
+      CATEGORIES.forEach(cat => {
+        selections[cat.id] = {};
+      });
+      selectedGrowthOption = { peer: null, class: null };
+      generatedGrowthSentence = { peer: "", class: "" };
+      generatedStepSentences = {};
+      customTexts = {};
+      document.getElementById("childName").value = "";
+      renderGrowthBox();
+      renderTabs();
+      renderSteps();
+      generateReport(false);
+      showToast("선택 항목이 모두 초기화되었습니다.");
+    }
+
+    function copyReport() {
+      const text = document.getElementById("reportOutput").value;
+      if (!text.trim()) {
+        showToast("복사할 보고서 내용이 없습니다.");
+        return;
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+          showToast("클립보드에 복사되었습니다!");
+        }).catch(() => fallbackCopy());
+      } else {
+        fallbackCopy();
+      }
+    }
+
+    function fallbackCopy() {
+      const ta = document.getElementById("reportOutput");
+      ta.select();
+      document.execCommand("copy");
+      showToast("클립보드에 복사되었습니다!");
+    }
+
+    function scrollToPreview() {
+      const el = document.getElementById("previewSection");
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+
+    function saveCurrentChild() {
+      const text = document.getElementById("reportOutput").value.trim();
+      if (!text) {
+        showToast("저장할 내용이 없습니다.");
+        return;
+      }
+      const nameInput = document.getElementById("childName").value.trim();
+      const monthLabel = currentMonthStage !== "none" ? `${currentMonthStage}개월차` : `기록 #${savedRecords.length + 1}`;
+      const title = nameInput ? `${nameInput} (${monthLabel})` : `대상 아동 (${monthLabel})`;
+      const cleanBody = text.replace(/^\[.*?\]\n/, "");
+
+      savedRecords.push({
+        id: Date.now(),
+        title,
+        content: cleanBody
+      });
+      renderSavedList();
+      showToast(`'${title}' 보고서가 저장되었습니다.`);
+    }
+
+    function renderSavedList() {
+      const list = document.getElementById("savedList");
+      document.getElementById("savedCount").textContent = savedRecords.length;
+      if (savedRecords.length === 0) {
+        list.innerHTML = `<p style="font-size:0.81rem; color:var(--text-muted); text-align:center; padding:14px 0;">
+          1개월차~6개월차 보고서를 순서대로 저장해 두고 한눈에 비교하거나 복사할 수 있습니다.
+        </p>`;
+        return;
+      }
+      list.innerHTML = "";
+      savedRecords.forEach(rec => {
+        const card = document.createElement("div");
+        card.className = "saved-card";
+        const top = document.createElement("div");
+        top.className = "saved-card-top";
+        const nameSpan = document.createElement("span");
+        nameSpan.textContent = `🗓️ ${rec.title}`;
+        const delBtn = document.createElement("button");
+        delBtn.type = "button";
+        delBtn.className = "btn";
+        delBtn.style.padding = "2px 8px";
+        delBtn.style.fontSize = "0.74rem";
+        delBtn.textContent = "삭제";
+        delBtn.addEventListener("click", () => {
+          savedRecords = savedRecords.filter(r => r.id !== rec.id);
+          renderSavedList();
+        });
+        top.appendChild(nameSpan);
+        top.appendChild(delBtn);
+
+        const body = document.createElement("div");
+        body.className = "saved-card-text";
+        body.textContent = rec.content;
+
+        card.appendChild(top);
+        card.appendChild(body);
+        list.appendChild(card);
+      });
+    }
+
+    function copyAllSaved() {
+      if (savedRecords.length === 0) {
+        showToast("저장된 기록이 없습니다.");
+        return;
+      }
+      const combined = savedRecords.map(r => `[${r.title}]\n${r.content}`).join("\n\n--------------------\n\n");
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(combined).then(() => {
+          showToast(`총 ${savedRecords.length}건의 기록이 일괄 복사되었습니다!`);
+        });
+      }
+    }
+
+    function downloadTxt() {
+      const currentText = document.getElementById("reportOutput").value.trim();
+      let output = currentText;
+      if (savedRecords.length > 0) {
+        output = savedRecords.map(r => `[${r.title}]\n${r.content}`).join("\n\n====================\n\n");
+      }
+      if (!output) {
+        showToast("다운로드할 내용이 없습니다.");
+        return;
+      }
+      const blob = new Blob([output], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "6호시설_아동_월별관찰보고서.txt";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById("toast");
+      t.textContent = msg;
+      t.classList.add("show");
+      setTimeout(() => t.classList.remove("show"), 2400);
+    }
+
+    
+    let reportHistory = [];
+
+    function pushReportHistory() {
+      const cur = document.getElementById("reportOutput").value;
+      if (cur && (reportHistory.length === 0 || reportHistory[reportHistory.length - 1] !== cur)) {
+        reportHistory.push(cur);
+        if (reportHistory.length > 20) reportHistory.shift();
+      }
+    }
+
+    function undoReport() {
+      if (reportHistory.length === 0) {
+        showToast("되돌릴 이전 문장 기록이 없습니다.");
+        return;
+      }
+      const prev = reportHistory.pop();
+      const outBox = document.getElementById("reportOutput");
+      outBox.value = prev;
+      outBox.classList.add("flash");
+      setTimeout(() => outBox.classList.remove("flash"), 260);
+      updateCharCount();
+      showToast("↩️ 직전 보고서 문장으로 되돌렸습니다.");
+    }
+
+    function loadSavedApiKey() {
+      try {
+        const savedKey = localStorage.getItem("gemini_report_api_key") || "";
+        const savedModel = localStorage.getItem("gemini_report_model") || "gemini-2.5-flash";
+        if (savedKey) {
+          document.getElementById("geminiApiKey").value = savedKey;
+        }
+        document.getElementById("geminiModelSelect").value = savedModel;
+        updateApiStatusBadge();
+      } catch (e) {
+        updateApiStatusBadge();
+      }
+    }
+
+    function saveApiKey() {
+      const keyVal = document.getElementById("geminiApiKey").value.trim();
+      const modelVal = document.getElementById("geminiModelSelect").value;
+      try {
+        if (keyVal) {
+          localStorage.setItem("gemini_report_api_key", keyVal);
+        } else {
+          localStorage.removeItem("gemini_report_api_key");
+        }
+        localStorage.setItem("gemini_report_model", modelVal);
+      } catch (e) {}
+      updateApiStatusBadge();
+      if (keyVal) {
+        showToast("🟢 Gemini API 키가 브라우저에 안전하게 저장되었습니다!");
+      } else {
+        showToast("⚪ API 키가 제거되어 내장 고급 엔진 모드로 전환되었습니다.");
+      }
+    }
+
+    function updateApiStatusBadge() {
+      const keyVal = document.getElementById("geminiApiKey").value.trim();
+      const badge = document.getElementById("apiStatusBadge");
+      if (keyVal) {
+        const modelVal = document.getElementById("geminiModelSelect").value;
+        badge.textContent = `Gemini 사용 · ${modelVal}`;
+        badge.className = "api-status-badge connected";
+      } else {
+        badge.textContent = "내장 문장 다듬기 사용 중";
+        badge.className = "api-status-badge";
+      }
+    }
+
+    function toggleKeyVisibility() {
+      const inp = document.getElementById("geminiApiKey");
+      inp.type = inp.type === "password" ? "text" : "password";
+    }
+
+    // 내장 고급 어휘 격상 및 실시간 수정 폴백 엔진 (API 키 없이도 즉시 작동)
+    function runBuiltinAdvancedRefinement(mode, customInstruction) {
+      pushReportHistory();
+      let text = document.getElementById("reportOutput").value.trim();
+      if (!text) {
+        generateReport(false);
+        text = document.getElementById("reportOutput").value.trim();
+      }
+
+      const endingStyle = document.getElementById("endingStyle").value;
+
+      // 고급 법원·보호시설 전문 어휘 치환 사전
+      const elevateMap = [
+        ["또래 관계는 전반적으로 원만하며", "공동체 내 교우 관계는 전반적으로 원만하게 형성되어 있으며"],
+        ["대부분의 또래와 대화를 나누고 관계를 이어 가는", "대다수 또래 아동들과 안정적으로 의사소통하며 사회적 유대를 이어 가는"],
+        ["관계를 깊게 발전시키기보다는 일정한 거리를 유지하는", "타인과 정서적으로 깊이 밀착하기보다는 일정한 심리적 경계를 유지하며 신중하게 교류하는"],
+        ["자신을 강하게 드러내려는 모습이 종종 나타났으나", "자기주장을 앞세우거나 방어적으로 자신을 과시하려는 양상이 간혹 표출되었으나"],
+        ["상대방을 이해하고 받아들이려는 모습이 늘어나고 있음", "타인의 입장을 역지사지로 헤아리고 수용하려는 대인 유연성이 점차 향상되고 있음"],
+        ["또래를 대하는 태도가 이전보다 유연해지고 있으며", "또래 아동들을 대하는 정서적 태도가 한층 부드럽고 유연해지고 있으며"],
+        ["수업 태도는 전반적으로 양호하며", "교육 및 직업훈련에 임하는 기본 학습 태도는 전반적으로 양호하며"],
+        ["대부분의 수업에서 높은 이해도를 보이고", "제반 교육 과정에서 우수한 과제 이해력을 바탕으로"],
+        ["신체활동 중심의 수업을 선호하며", "역동적인 신체활동 및 실습 위주의 프로그램에 높은 선호도와 활기를 보이며"],
+        ["충분한 사고가 필요한 활동에서는 비교적 간단하고 부담이 적은 방식으로 참여하려는", "심층적인 사고와 지구력이 요구되는 과제에서는 인지적 부담을 피하고 비교적 단순한 방식으로만 참여하려는"],
+        ["학습 내용을 이해하는 능력은 양호하나", "전달되는 교육 내용을 파악하는 기초 인지 역량은 양호한 수준이나"],
+        ["생각하는 과정에 충분히 참여하고 스스로 해결 방법을 찾아가는 태도에는 보완이 필요함", "사고 과정에 깊이 있게 몰입하여 자기주도적으로 문제 해결 방안을 모색하는 과제 집착력에는 지속적인 보완이 필요함"],
+        ["폭력적이고 강압적인 태도를", "언어적·신체적 위압감을 앞세운 강압적 태도를"],
+        ["대인관계를 전혀 맺지 못하고", "주변 아동들과 사회적 라포(Rapport)를 전혀 형성하지 못한 채"],
+        ["수업 태도는 전반적으로 불성실하며", "교육 및 직업훈련 시간에 임하는 기본 자세가 전반적으로 산만하고 불성실하며"]
+      ];
+
+      const warmMap = [
+        ["보완이 필요함.", "단계적인 격려와 세심한 지도를 통해 보완해 나갈 필요가 있음."],
+        ["지속적인 보완이 요구됨.", "긍정적인 성취 경험을 지원하며 점진적으로 보완해 나감이 바람직함."],
+        ["경향이 있음.", "경향이 관찰되나 교사의 지지 속에 점차 개선될 여지가 확인됨."],
+        ["경향이 관찰되고 있음.", "모습이 관찰되고 있어 강점을 활용한 동기 부여가 병행되고 있음."]
+      ];
+
+      const strictMap = [
+        ["모습이 관찰되고 있음.", "양상이 객관적으로 확인되고 있음."],
+        ["경향이 있음.", "행동 특성이 뚜렷하게 관찰됨."],
+        ["보완이 필요함.", "일관된 기준 적용과 체계적인 행동 교정이 요구됨."]
+      ];
+
+      elevateMap.forEach(([from, to]) => {
+        text = text.split(from).join(to);
+      });
+
+      if (mode === "warm") {
+        warmMap.forEach(([from, to]) => {
+          text = text.split(from).join(to);
+        });
+      } else if (mode === "strict") {
+        strictMap.forEach(([from, to]) => {
+          text = text.split(from).join(to);
+        });
+      } else if (mode === "compare_prev") {
+        const prevText = document.getElementById("prevReportInput").value.trim();
+        if (prevText && !text.includes("전월 보고 시점과 대조해 볼 때")) {
+          const lines = text.split("\n\n");
+          if (lines.length > 0) {
+            lines[0] = lines[0].replace(
+              /(▪\s*|•\s*|-\s*|\[.*?\]\s*)/,
+              "$1전월 보고 시점과 대조해 볼 때 공동체 적응도가 한층 안정화되는 흐름을 보이며, "
+            );
+          }
+          text = lines.join("\n\n");
+        }
+      }
+
+      // 사용자가 입력한 실시간 수정·추가 요청을 보고서 문체로 변환하여 반영
+      if (customInstruction && customInstruction.trim()) {
+        let req = customInstruction.trim();
+        // 명령형 어미("넣어줘", "추가해줘", "수정해줘", "반영해줘", "강조해줘") 제거 후 보고서 문체로 자연스럽게 변환
+        let cleaned = req
+          .replace(/(한다는|보인다는|있다는|된다는|다고|라고|내용을|부분을|점도|것도)?\s*(내용을|부분을)?\s*(자연스럽게)?\s*(넣어\s*줘|추가해\s*줘|반영해\s*줘|수정해\s*줘|강조해\s*줘|작성해\s*줘|다듬어\s*줘|줄여\s*줘)\.?$/g, function(m, p1) { return (p1 && p1.endsWith("고")) ? p1.slice(0, -2) + "는" : ((p1 && p1.endsWith("는")) ? p1.slice(0, -2) : ""); })
+          .trim();
+
+        // 메타 지시어("문장 간 연결...", "겹치는 표현...", "간결하게...")가 아닌 실제 관찰 내용인 경우 문단 끝에 자연스럽게 결합
+        const isMetaPrompt = /(문장\s*간\s*연결|겹치는\s*표현|간결하게|글자\s*수|어휘로\s*다듬)/.test(req);
+        if (!isMetaPrompt && cleaned.length > 3) {
+          if (!cleaned.endsWith("음.") && !cleaned.endsWith("함.") && !cleaned.endsWith("됨.") && !cleaned.endsWith("다.")) {
+            cleaned = cleaned
+              .replace(/보인다$/, "보이는 모습이 관찰되고 있음")
+              .replace(/있다$/, "있는 모습이 확인되고 있음")
+              .replace(/한다$/, "하는 모습이 관찰되고 있음")
+              .replace(/줄었다$/, "줄어드는 변화가 확인되고 있음")
+              .replace(/늘었다$/, "늘어나는 긍정적 변화가 관찰되고 있음")
+              .replace(/남아있다$/, "남아 있어 지속적인 지도가 필요함")
+              .replace(/필요하다$/, "필요한 것으로 확인되고 있음");
+            if (!cleaned.endsWith("음") && !cleaned.endsWith("함") && !cleaned.endsWith("됨")) {
+              cleaned = `특히 ${cleaned} 모습이 관찰되고 있음.`;
+            } else {
+              cleaned = `아울러 ${cleaned}.`;
+            }
+          }
+          cleaned = convertEnding(cleaned, endingStyle);
+          const paras = text.split("\n\n");
+          const targetIdx = ( /수업|실습|자격증|필기|이론|바리스타|제과|컴퓨터|훈련|과제|공부/.test(req) && paras.length > 1 ) ? 1 : 0;
+          paras[targetIdx] = paras[targetIdx].trim() + " " + cleaned;
+          text = paras.join("\n\n");
+        }
+      }
+
+      const outBox = document.getElementById("reportOutput");
+      outBox.value = text;
+      outBox.classList.add("flash");
+      setTimeout(() => outBox.classList.remove("flash"), 260);
+      updateCharCount();
+    }
+
+    async function fetchGeminiWithFallback(apiKey, preferredModel, body, onAttempt) {
+      const models = [...new Set([preferredModel, "gemini-3.5-flash-lite", "gemini-3.8-flash"])];
+      let lastError;
+      for (let i = 0; i < models.length; i++) {
+        if (i) await new Promise(resolve => setTimeout(resolve, 700 + Math.random() * 300));
+        const model = models[i];
+        onAttempt(model, i);
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 20000);
+        try {
+          const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
+          const resp = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey }, body: JSON.stringify(body), signal: controller.signal });
+          const data = await resp.json().catch(() => ({}));
+          if (!resp.ok) {
+            const error = new Error(data?.error?.message || `HTTP ${resp.status}`);
+            error.status = resp.status;
+            throw error;
+          }
+          const text = data?.candidates?.[0]?.content?.parts?.map(p => p.text || "").join("").trim();
+          if (!text) throw new Error("응답이 비어 있거나 차단되었습니다. 입력 내용을 확인해 주세요.");
+          return { text, model };
+        } catch (error) {
+          lastError = error;
+          if (error.status && ![404, 408, 429, 500, 502, 503, 504].includes(error.status)) throw error;
+          if (!error.status && error.name !== "AbortError" && !(error instanceof TypeError)) throw error;
+        } finally {
+          clearTimeout(timeout);
+        }
+      }
+      throw lastError;
+    }
+
+    let aiRequestRunning = false;
+    async function callGeminiForReport(mode, customInstruction) {
+      if (aiRequestRunning) { showToast("문장 다듬기가 진행 중입니다."); return; }
+      const apiKey = document.getElementById("geminiApiKey").value.trim();
+      const model = document.getElementById("geminiModelSelect").value || "gemini-3.5-flash-lite";
+      const currentReport = document.getElementById("reportOutput").value.trim();
+      const prevReport = document.getElementById("prevReportInput").value.trim();
+      const endingStyle = document.getElementById("endingStyle").value;
+      const bulletStyle = document.getElementById("bulletStyle").value;
+
+      if (!currentReport) {
+        showToast("먼저 특성을 선택하여 기본 보고서 초안을 생성해 주세요.");
+        return;
+      }
+
+      // API 키가 없는 경우 내장 고급 윤문 엔진으로 즉시 처리
+      if (!apiKey) {
+        runBuiltinAdvancedRefinement(mode, customInstruction);
+        showToast("✨ 내장 고급 윤문 엔진으로 반영되었습니다! (Gemini API 키 입력 시 실시간 LLM이 작동합니다)");
+        return;
+      }
+
+      const loadingBar = document.getElementById("aiLoadingBar");
+      const loadingText = document.getElementById("aiLoadingText");
+      aiRequestRunning = true;
+      loadingBar.classList.add("active");
+      loadingText.textContent = `⏳ ${model} 모델이 보고서 문장을 실시간으로 다듬고 있습니다...`;
+
+      let modeInstruction = "";
+      if (mode === "elevate") {
+        modeInstruction = "현재 보고서 초안의 핵심 내용은 모두 유지하되, 가정법원 소년부 및 6호 소년보호시설 공식 제출용 보고서에 걸맞은 격조 높고 전문적인 문체(라포 형성, 대인 수용성, 방어기제 완화, 과제 집착력, 자기주도적 문제 해결 등 자연스러운 전문 표현)로 매끄럽게 윤문해 주세요.";
+      } else if (mode === "compare_prev") {
+        modeInstruction = "첨부된 [지난달 보고서]와 [현재 보고서 초안]을 비교하여, 지난달과 똑같은 문장 반복은 피하고 한 달 동안 달라진 점·성장한 점·여전히 보완이 필요한 점이 시간 흐름에 따라 입체적으로 드러나도록 윤문해 주세요.";
+      } else if (mode === "warm") {
+        modeInstruction = "객관적인 관찰 보고서 형식을 유지하면서도, 아동의 작은 변화 가능성과 잠재력, 교사의 정서적 지지 및 향후 성장 기대감이 따뜻하고 설득력 있게 드러나도록 다듬어 주세요.";
+      } else if (mode === "strict") {
+        modeInstruction = "감정적 수식어를 배제하고, 행동 관찰 사실과 규율 위반·대인 마찰·수업 태도 문제 및 단호한 교정 지도 필요성이 명확하고 객관적으로 드러나도록 엄정한 보고 문체로 다듬어 주세요.";
+      } else if (mode === "custom") {
+        modeInstruction = `사용자의 다음 실시간 수정 요청을 최우선으로 반영하여 보고서를 자연스럽게 수정·보완해 주세요: "${customInstruction}"`;
+      }
+
+      const endingGuide = endingStyle === "report"
+        ? "모든 문장의 종결 어미는 반드시 예시와 동일한 개조식 보고서 문체('~관찰되고 있음.', '~경향이 있음.', '~늘어나고 있음.', '~확인되고 있음.', '~보완이 필요함.', '~요구됨.')로 작성하세요."
+        : (endingStyle === "plain" ? "모든 문장의 종결 어미는 서술형 평어체('~관찰된다.', '~경향이 있다.', '~필요하다.')로 작성하세요." : "모든 문장의 종결 어미는 격식체('~관찰되고 있습니다.', '~필요합니다.')로 작성하세요.");
+
+      const systemPrompt = [
+        "당신은 대한민국 소년보호 6호시설(아동회복지원시설·아동복지시설)에서 중·고등학생 입소 아동의 월별 생활태도, 직업훈련·자격증 수업태도, 정서 특성을 기록하여 법원 및 기관에 제출하는 전문 실무자입니다.",
+        "반드시 아래 기준 예시문의 문단 구조와 어조를 준수하세요:",
+        "[기준 예시문]",
+        "▪ 또래 관계는 전반적으로 원만하며, 대부분의 또래와 대화를 나누고 관계를 이어 가는 모습이 관찰되고 있음. 다만 관계를 깊게 발전시키기보다는 일정한 거리를 유지하는 경향이 있음. 입소 초기에는 자신을 강하게 드러내려는 모습이 종종 나타났으나, 최근에는 상대방을 이해하고 받아들이려는 모습이 늘어나고 있음. 또래를 대하는 태도가 이전보다 유연해지고 있으며, 관계를 유지하는 방식에서도 긍정적인 변화가 확인되고 있음.",
+        "▪ 수업 태도는 전반적으로 양호하며, 대부분의 수업에서 높은 이해도를 보이고 교사의 안내에 따라 학습활동에 참여하고 있음. 신체활동 중심의 수업을 선호하며, 충분한 사고가 필요한 활동에서는 비교적 간단하고 부담이 적은 방식으로 참여하려는 경향이 관찰되고 있음. 학습 내용을 이해하는 능력은 양호하나, 생각하는 과정에 충분히 참여하고 스스로 해결 방법을 찾아가는 태도에는 보완이 필요함.",
+        "",
+        `[작성 규칙]`,
+        `1. ${endingGuide}`,
+        `2. 각 문단은 '${bulletStyle || "▪ "}' 기호로 시작하고, 불필요한 인사말이나 마크다운 설명 없이 오직 완성된 보고서 본문만 출력하세요.`,
+        `3. 작성 회차: ${currentMonthStage === "none" ? "일반 월별 정기 보고" : "위탁 " + currentMonthStage + "개월차 정기 보고"}`,
+        prevReport ? `4. [지난달 보고서 참고 내용]:\n${prevReport}` : "",
+        `5. [핵심 요청사항]: ${modeInstruction}`
+      ].filter(Boolean).join("\n");
+
+      const userPrompt = `[현재 작성된 보고서 초안]\n${currentReport}\n\n위 초안을 바탕으로 요청사항을 완벽히 반영한 최종 보고서 본문만 출력해 주세요.`;
+
+      try {
+        const result = await fetchGeminiWithFallback(apiKey, model, {
+          systemInstruction: { parts: [{ text: systemPrompt }] },
+          contents: [{ role: "user", parts: [{ text: userPrompt }] }]
+        }, (attemptModel, index) => {
+          loadingText.textContent = index ? `${attemptModel} 모델로 다시 시도 중...` : `${attemptModel} 모델이 문장을 다듬는 중...`;
+        });
+        const outBox = document.getElementById("reportOutput");
+        if (outBox.value.trim() !== currentReport) {
+          showToast("요청 중 보고서가 변경되어 AI 결과를 적용하지 않았습니다.");
+          return;
+        }
+        pushReportHistory();
+        outBox.value = result.text;
+        outBox.classList.add("flash");
+        setTimeout(() => outBox.classList.remove("flash"), 300);
+        updateCharCount();
+        showToast(`${result.model} 모델로 문장을 다듬었습니다.`);
+      } catch (err) {
+        const message = err.name === "AbortError" ? "응답 시간이 초과되었습니다." : (err.status === 400 || err.status === 401 || err.status === 403 ? "API 키, 요청 내용 또는 접근 권한을 확인해 주세요." : (err.status === 429 ? "사용량 한도를 확인한 뒤 다시 시도해 주세요." : "연결 상태와 모델 접근 권한을 확인해 주세요."));
+        showToast(`Gemini 요청 실패: ${message}`);
+      } finally {
+        aiRequestRunning = false;
+        loadingBar.classList.remove("active");
+      }
+    }
+
+    
+    function copyPromptForPaidGemini() {
+      const currentReport = document.getElementById("reportOutput").value.trim();
+      const prevReport = document.getElementById("prevReportInput").value.trim();
+      const customReq = document.getElementById("aiRevisionInput").value.trim();
+      const monthText = currentMonthStage === "none" ? "월별 정기 보고서" : `위탁 ${currentMonthStage}개월차 정기 보고서`;
+
+      if (!currentReport) {
+        showToast("먼저 특성을 선택하여 보고서 초안을 생성해 주세요.");
+        return;
+      }
+
+      const promptLines = [
+        `다음은 소년보호 6호시설 입소 중·고등학생 아동의 [${monthText}] 초안이야.`,
+        `우리 시설 보고서 양식(▪ 기호 시작, '~관찰되고 있음.', '~경향이 있음.', '~확인되고 있음.', '~보완이 필요함.' 개조식 종결어미)을 엄격히 유지하면서, 문맥이 자연스럽고 격조 높은 전문 보고서 문장으로 다듬어줘.`,
+        ""
+      ];
+
+      if (prevReport) {
+        promptLines.push(`[지난달 보고서 내용 (중복 표현은 피하고 전월 대비 변화가 자연스럽게 이어지도록 참고)]`);
+        promptLines.push(prevReport);
+        promptLines.push("");
+      }
+
+      promptLines.push(`[이번 달 선택한 특성 기반 보고서 초안]`);
+      promptLines.push(currentReport);
+
+      if (customReq) {
+        promptLines.push("");
+        promptLines.push(`[추가 반영 및 실시간 수정 요청사항]`);
+        promptLines.push(customReq);
+      }
+
+      const fullPrompt = promptLines.join("\n");
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(fullPrompt).then(() => {
+          showToast("💬 유료 제미나이 채팅창용 맞춤 명령문이 복사되었습니다! 채팅창에 바로 붙여넣으세요.");
+        }).catch(() => {
+          document.getElementById("reportOutput").value = fullPrompt;
+          fallbackCopy();
+        });
+      } else {
+        document.getElementById("reportOutput").value = fullPrompt;
+        fallbackCopy();
+      }
+    }
+
+    function initApp() {
+      // AI Studio & API Key listeners
+      loadSavedApiKey();
+      document.getElementById("btnSaveApiKey").addEventListener("click", saveApiKey);
+      document.getElementById("btnToggleKeyVis").addEventListener("click", toggleKeyVisibility);
+      document.getElementById("geminiModelSelect").addEventListener("change", saveApiKey);
+      document.getElementById("btnUndoReport").addEventListener("click", undoReport);
+      document.getElementById("btnCopyForPaidGemini").addEventListener("click", copyPromptForPaidGemini);
+
+      document.getElementById("btnApplyPreset").addEventListener("click", () => document.getElementById(document.getElementById("aiPreset").value).click());
+      document.getElementById("btnAiElevate").addEventListener("click", () => callGeminiForReport("elevate", ""));
+      document.getElementById("btnAiComparePrev").addEventListener("click", () => callGeminiForReport("compare_prev", ""));
+      document.getElementById("btnAiWarmTone").addEventListener("click", () => callGeminiForReport("warm", ""));
+      document.getElementById("btnAiStrictTone").addEventListener("click", () => callGeminiForReport("strict", ""));
+
+      document.getElementById("btnRunAiRevision").addEventListener("click", () => {
+        const req = document.getElementById("aiRevisionInput").value.trim();
+        if (!req) {
+          showToast("수정하거나 추가할 요청 내용을 입력해 주세요.");
+          return;
+        }
+        callGeminiForReport("custom", req);
+      });
+      document.getElementById("aiRevisionInput").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          document.getElementById("btnRunAiRevision").click();
+        }
+      });
+      document.querySelectorAll(".ai-quick-chip").forEach(chip => {
+        chip.addEventListener("click", () => {
+          const p = chip.getAttribute("data-prompt");
+          document.getElementById("aiRevisionInput").value = p;
+          callGeminiForReport("custom", p);
+        });
+      });
+
+      // Month pills
+      document.querySelectorAll(".month-pill").forEach(btn => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll(".month-pill").forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+          currentMonthStage = btn.getAttribute("data-month");
+          ["peer", "class", "life", "trait"].forEach(cid => {
+            if (selectedGrowthOption[cid]) {
+              generatedGrowthSentence[cid] = synthesizeGrowthSentence(selectedGrowthOption[cid]);
+            }
+          });
+          generateReport(true);
+        });
+      });
+
+      // Previous report analyzer buttons
+      document.getElementById("btnAnalyzePrev").addEventListener("click", () => analyzePreviousReport(true));
+      document.getElementById("prevReportInput").addEventListener("input", () => analyzePreviousReport(false));
+      document.getElementById("btnUseCurrentAsPrev").addEventListener("click", () => {
+        const cur = document.getElementById("reportOutput").value.trim();
+        document.getElementById("prevReportInput").value = cur;
+        // Advance month stage automatically if 1..5
+        const nextMap = { "none": "2", "1": "2", "2": "3", "3": "4", "4": "5", "5": "6", "6": "6" };
+        currentMonthStage = nextMap[currentMonthStage] || "2";
+        document.querySelectorAll(".month-pill").forEach(b => {
+          b.classList.toggle("active", b.getAttribute("data-month") === currentMonthStage);
+        });
+        analyzePreviousReport(false);
+        rerollAll();
+        showToast(`📤 현재 보고서를 지난달 기준으로 설정하고 [${currentMonthStage}개월차] 변화 선택지를 준비했습니다!`);
+      });
+      document.getElementById("btnClearPrev").addEventListener("click", () => {
+        document.getElementById("prevReportInput").value = "";
+        selectedGrowthOption = { peer: null, class: null };
+        generatedGrowthSentence = { peer: "", class: "" };
+        analyzePreviousReport(false);
+        generateReport(false);
+      });
+
+      document.getElementById("btnRerollTop").addEventListener("click", rerollAll);
+      document.getElementById("btnRerollMain").addEventListener("click", rerollAll);
+      document.getElementById("btnRerollMobile").addEventListener("click", rerollAll);
+      document.getElementById("btnRerollCat").addEventListener("click", () => rerollCategory(activeCategoryId));
+
+      document.getElementById("btnLoadSample").addEventListener("click", loadUserSample);
+      document.getElementById("btnRandomize").addEventListener("click", randomizeSelection);
+      document.getElementById("btnReset").addEventListener("click", resetAll);
+      document.getElementById("btnCopyMain").addEventListener("click", copyReport);
+      document.getElementById("btnCopyMobile").addEventListener("click", copyReport);
+      document.getElementById("btnScrollPreview").addEventListener("click", scrollToPreview);
+      document.getElementById("mobileBarInfo").addEventListener("click", scrollToPreview);
+      document.getElementById("btnSaveChild").addEventListener("click", saveCurrentChild);
+      document.getElementById("btnDownloadTxt").addEventListener("click", downloadTxt);
+      document.getElementById("btnCopyAllSaved").addEventListener("click", copyAllSaved);
+
+      document.getElementById("childName").addEventListener("input", () => generateReport(false));
+      document.getElementById("flowMode").addEventListener("change", () => generateReport(true));
+      document.getElementById("bulletStyle").addEventListener("change", () => generateReport(false));
+      document.getElementById("endingStyle").addEventListener("change", () => generateReport(false));
+      document.getElementById("reportOutput").addEventListener("input", updateCharCount);
+
+      refreshAllStepSentences(false);
+      analyzePreviousReport(false);
+      renderTabs();
+      renderSectionToggles();
+      renderSteps();
+      generateReport(false);
+      renderSavedList();
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initApp);
+    } else {
+      initApp();
+    }
+  })();
+  </script>
+</body>
+</html>
